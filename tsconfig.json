@@ -7,7 +7,7 @@
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
-    "module": "commonjs",
+    "module": "nodenext",
     "target": "es2024",
     "types": [],
     // For nodejs:
@@ -42,5 +42,7 @@
     "skipLibCheck": true,
     "esModuleInterop": true
   },
-  "include": ["./src/*"]
+  "include": ["./src/*"],
+  "emitDecoratorMetadata": true,
+  "experimentalDecorators": true
 }
