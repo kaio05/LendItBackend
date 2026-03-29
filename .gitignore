@@ -24,3 +24,8 @@ logs
 
 # Environment variables
 .env*
+/src/generated/prisma
+
+/prisma/src/prisma
+
+/generated/prisma
