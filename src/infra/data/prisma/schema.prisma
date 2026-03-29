@@ -11,3 +11,11 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model Game {
+  id String @id @default(uuid())
+  name String
+  category String
+  description String
+  available Boolean @db.Boolean
+}
