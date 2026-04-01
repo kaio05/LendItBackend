@@ -20,7 +20,7 @@ const config: runtime.GetPrismaClientConfig = {
   "clientVersion": "7.6.0",
   "engineVersion": "75cbdc1eb7150937890ad5465d861175c6624711",
   "activeProvider": "postgresql",
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Get a free hosted Postgres database in seconds: `npx create-db`\n\ngenerator client {\n  provider = \"prisma-client\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel Game {\n  id          String  @id @default(uuid())\n  name        String\n  category    String\n  description String\n  available   Boolean @db.Boolean\n}\n",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel User {\n  id       String @id @default(uuid())\n  username String\n  email    String @unique\n  password String\n  game     Game[]\n}\n\nmodel Game {\n  id          String  @id @default(uuid())\n  name        String\n  category    String\n  description String\n  available   Boolean @db.Boolean\n  iduser      User    @relation(fields: [id], references: [id], onDelete: Cascade)\n}\n",
   "runtimeDataModel": {
     "models": {},
     "enums": {},
@@ -32,10 +32,10 @@ const config: runtime.GetPrismaClientConfig = {
   }
 }
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"Game\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"category\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"available\",\"kind\":\"scalar\",\"type\":\"Boolean\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"username\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"game\",\"kind\":\"object\",\"type\":\"Game\",\"relationName\":\"GameToUser\"}],\"dbName\":null},\"Game\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"category\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"available\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"iduser\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"GameToUser\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 config.parameterizationSchema = {
-  strings: JSON.parse("[\"where\",\"Game.findUnique\",\"Game.findUniqueOrThrow\",\"orderBy\",\"cursor\",\"Game.findFirst\",\"Game.findFirstOrThrow\",\"Game.findMany\",\"data\",\"Game.createOne\",\"Game.createMany\",\"Game.createManyAndReturn\",\"Game.updateOne\",\"Game.updateMany\",\"Game.updateManyAndReturn\",\"create\",\"update\",\"Game.upsertOne\",\"Game.deleteOne\",\"Game.deleteMany\",\"having\",\"_count\",\"_min\",\"_max\",\"Game.groupBy\",\"Game.aggregate\",\"AND\",\"OR\",\"NOT\",\"id\",\"name\",\"category\",\"description\",\"available\",\"equals\",\"not\",\"in\",\"notIn\",\"lt\",\"lte\",\"gt\",\"gte\",\"contains\",\"startsWith\",\"endsWith\",\"set\"]"),
-  graph: "KQkQCBoAACIAMBsAAAQAEBwAACIAMB0BAAAAAR4BACMAIR8BACMAISABACMAISEgACQAIQEAAAABACABAAAAAQAgCBoAACIAMBsAAAQAEBwAACIAMB0BACMAIR4BACMAIR8BACMAISABACMAISEgACQAIQADAAAABAAgAwAABQAwBAAAAQAgAwAAAAQAIAMAAAUAMAQAAAEAIAMAAAAEACADAAAFADAEAAABACAFHQEAAAABHgEAAAABHwEAAAABIAEAAAABISAAAAABAQgAAAkAIAUdAQAAAAEeAQAAAAEfAQAAAAEgAQAAAAEhIAAAAAEBCAAACwAwAQgAAAsAMAUdAQAoACEeAQAoACEfAQAoACEgAQAoACEhIAApACECAAAAAQAgCAAADgAgBR0BACgAIR4BACgAIR8BACgAISABACgAISEgACkAIQIAAAAEACAIAAAQACACAAAABAAgCAAAEAAgAwAAAAEAIA8AAAkAIBAAAA4AIAEAAAABACABAAAABAAgAxUAACUAIBYAACcAIBcAACYAIAgaAAAaADAbAAAXABAcAAAaADAdAQAbACEeAQAbACEfAQAbACEgAQAbACEhIAAcACEDAAAABAAgAwAAFgAwFAAAFwAgAwAAAAQAIAMAAAUAMAQAAAEAIAgaAAAaADAbAAAXABAcAAAaADAdAQAbACEeAQAbACEfAQAbACEgAQAbACEhIAAcACEOFQAAHgAgFgAAIQAgFwAAIQAgIgEAAAABIwEAIAAhJAEAAAAEJQEAAAAEJgEAAAABJwEAAAABKAEAAAABKQEAAAABKgEAAAABKwEAAAABLAEAAAABBRUAAB4AIBYAAB8AIBcAAB8AICIgAAAAASMgAB0AIQUVAAAeACAWAAAfACAXAAAfACAiIAAAAAEjIAAdACEIIgIAAAABIwIAHgAhJAIAAAAEJQIAAAAEJgIAAAABJwIAAAABKAIAAAABKQIAAAABAiIgAAAAASMgAB8AIQ4VAAAeACAWAAAhACAXAAAhACAiAQAAAAEjAQAgACEkAQAAAAQlAQAAAAQmAQAAAAEnAQAAAAEoAQAAAAEpAQAAAAEqAQAAAAErAQAAAAEsAQAAAAELIgEAAAABIwEAIQAhJAEAAAAEJQEAAAAEJgEAAAABJwEAAAABKAEAAAABKQEAAAABKgEAAAABKwEAAAABLAEAAAABCBoAACIAMBsAAAQAEBwAACIAMB0BACMAIR4BACMAIR8BACMAISABACMAISEgACQAIQsiAQAAAAEjAQAhACEkAQAAAAQlAQAAAAQmAQAAAAEnAQAAAAEoAQAAAAEpAQAAAAEqAQAAAAErAQAAAAEsAQAAAAECIiAAAAABIyAAHwAhAAAAAS0BAAAAAQEtIAAAAAEAAAAAAxUABhYABxcACAAAAAMVAAYWAAcXAAgBAgECAwEFBgEGBwEHCAEJCgEKDAILDQMMDwENEQIOEgQREwESFAETFQIYGAUZGQk"
+  strings: JSON.parse("[\"where\",\"orderBy\",\"cursor\",\"iduser\",\"game\",\"_count\",\"User.findUnique\",\"User.findUniqueOrThrow\",\"User.findFirst\",\"User.findFirstOrThrow\",\"User.findMany\",\"data\",\"User.createOne\",\"User.createMany\",\"User.createManyAndReturn\",\"User.updateOne\",\"User.updateMany\",\"User.updateManyAndReturn\",\"create\",\"update\",\"User.upsertOne\",\"User.deleteOne\",\"User.deleteMany\",\"having\",\"_min\",\"_max\",\"User.groupBy\",\"User.aggregate\",\"Game.findUnique\",\"Game.findUniqueOrThrow\",\"Game.findFirst\",\"Game.findFirstOrThrow\",\"Game.findMany\",\"Game.createOne\",\"Game.createMany\",\"Game.createManyAndReturn\",\"Game.updateOne\",\"Game.updateMany\",\"Game.updateManyAndReturn\",\"Game.upsertOne\",\"Game.deleteOne\",\"Game.deleteMany\",\"Game.groupBy\",\"Game.aggregate\",\"AND\",\"OR\",\"NOT\",\"id\",\"name\",\"category\",\"description\",\"available\",\"equals\",\"not\",\"in\",\"notIn\",\"lt\",\"lte\",\"gt\",\"gte\",\"contains\",\"startsWith\",\"endsWith\",\"username\",\"email\",\"password\",\"every\",\"some\",\"none\",\"is\",\"isNot\",\"connectOrCreate\",\"upsert\",\"createMany\",\"set\",\"disconnect\",\"delete\",\"connect\",\"updateMany\",\"deleteMany\"]"),
+  graph: "YxIgCAQAAEAAICwAAD4AMC0AAAkAEC4AAD4AMC8BAAAAAT8BAD8AIUABAAAAAUEBAD8AIQEAAAABACAJAwAAQwAgLAAAQQAwLQAAAwAQLgAAQQAwLwEAPwAhMAEAPwAhMQEAPwAhMgEAPwAhMyAAQgAhAQMAAF0AIAkDAABDACAsAABBADAtAAADABAuAABBADAvAQAAAAEwAQA_ACExAQA_ACEyAQA_ACEzIABCACEDAAAAAwAgAQAABAAwAgAABQAgAQAAAAMAIAEAAAABACAIBAAAQAAgLAAAPgAwLQAACQAQLgAAPgAwLwEAPwAhPwEAPwAhQAEAPwAhQQEAPwAhAQQAAFwAIAMAAAAJACABAAAKADACAAABACADAAAACQAgAQAACgAwAgAAAQAgAwAAAAkAIAEAAAoAMAIAAAEAIAUEAABbACAvAQAAAAE_AQAAAAFAAQAAAAFBAQAAAAEBCwAADgAgBC8BAAAAAT8BAAAAAUABAAAAAUEBAAAAAQELAAAQADABCwAAEAAwBQQAAE4AIC8BAEcAIT8BAEcAIUABAEcAIUEBAEcAIQIAAAABACALAAATACAELwEARwAhPwEARwAhQAEARwAhQQEARwAhAgAAAAkAIAsAABUAIAIAAAAJACALAAAVACADAAAAAQAgEgAADgAgEwAAEwAgAQAAAAEAIAEAAAAJACADBQAASwAgGAAATQAgGQAATAAgBywAAD0AMC0AABwAEC4AAD0AMC8BADYAIT8BADYAIUABADYAIUEBADYAIQMAAAAJACABAAAbADAXAAAcACADAAAACQAgAQAACgAwAgAAAQAgAQAAAAUAIAEAAAAFACADAAAAAwAgAQAABAAwAgAABQAgAwAAAAMAIAEAAAQAMAIAAAUAIAMAAAADACABAAAEADACAAAFACAGAwAASgAgLwEAAAABMAEAAAABMQEAAAABMgEAAAABMyAAAAABAQsAACQAIAUvAQAAAAEwAQAAAAExAQAAAAEyAQAAAAEzIAAAAAEBCwAAJgAwAQsAACYAMAYDAABJACAvAQBHACEwAQBHACExAQBHACEyAQBHACEzIABIACECAAAABQAgCwAAKQAgBS8BAEcAITABAEcAITEBAEcAITIBAEcAITMgAEgAIQIAAAADACALAAArACACAAAAAwAgCwAAKwAgAwAAAAUAIBIAACQAIBMAACkAIAEAAAAFACABAAAAAwAgAwUAAEQAIBgAAEYAIBkAAEUAIAgsAAA1ADAtAAAyABAuAAA1ADAvAQA2ACEwAQA2ACExAQA2ACEyAQA2ACEzIAA3ACEDAAAAAwAgAQAAMQAwFwAAMgAgAwAAAAMAIAEAAAQAMAIAAAUAIAgsAAA1ADAtAAAyABAuAAA1ADAvAQA2ACEwAQA2ACExAQA2ACEyAQA2ACEzIAA3ACEOBQAAOQAgGAAAPAAgGQAAPAAgNAEAAAABNQEAOwAhNgEAAAAENwEAAAAEOAEAAAABOQEAAAABOgEAAAABOwEAAAABPAEAAAABPQEAAAABPgEAAAABBQUAADkAIBgAADoAIBkAADoAIDQgAAAAATUgADgAIQUFAAA5ACAYAAA6ACAZAAA6ACA0IAAAAAE1IAA4ACEINAIAAAABNQIAOQAhNgIAAAAENwIAAAAEOAIAAAABOQIAAAABOgIAAAABOwIAAAABAjQgAAAAATUgADoAIQ4FAAA5ACAYAAA8ACAZAAA8ACA0AQAAAAE1AQA7ACE2AQAAAAQ3AQAAAAQ4AQAAAAE5AQAAAAE6AQAAAAE7AQAAAAE8AQAAAAE9AQAAAAE-AQAAAAELNAEAAAABNQEAPAAhNgEAAAAENwEAAAAEOAEAAAABOQEAAAABOgEAAAABOwEAAAABPAEAAAABPQEAAAABPgEAAAABBywAAD0AMC0AABwAEC4AAD0AMC8BADYAIT8BADYAIUABADYAIUEBADYAIQgEAABAACAsAAA-ADAtAAAJABAuAAA-ADAvAQA_ACE_AQA_ACFAAQA_ACFBAQA_ACELNAEAAAABNQEAPAAhNgEAAAAENwEAAAAEOAEAAAABOQEAAAABOgEAAAABOwEAAAABPAEAAAABPQEAAAABPgEAAAABA0IAAAMAIEMAAAMAIEQAAAMAIAkDAABDACAsAABBADAtAAADABAuAABBADAvAQA_ACEwAQA_ACExAQA_ACEyAQA_ACEzIABCACECNCAAAAABNSAAOgAhCgQAAEAAICwAAD4AMC0AAAkAEC4AAD4AMC8BAD8AIT8BAD8AIUABAD8AIUEBAD8AIUUAAAkAIEYAAAkAIAAAAAFKAQAAAAEBSiAAAAABBRIAAF8AIBMAAGIAIEcAAGAAIEgAAGEAIE0AAAEAIAMSAABfACBHAABgACBNAAABACAAAAALEgAATwAwEwAAVAAwRwAAUAAwSAAAUQAwSQAAUgAgSgAAUwAwSwAAUwAwTAAAUwAwTQAAUwAwTgAAVQAwTwAAVgAwBDABAAAAATEBAAAAATIBAAAAATMgAAAAAQIAAAAFACASAABaACADAAAABQAgEgAAWgAgEwAAWQAgAQsAAF4AMAkDAABDACAsAABBADAtAAADABAuAABBADAvAQAAAAEwAQA_ACExAQA_ACEyAQA_ACEzIABCACECAAAABQAgCwAAWQAgAgAAAFcAIAsAAFgAIAgsAABWADAtAABXABAuAABWADAvAQA_ACEwAQA_ACExAQA_ACEyAQA_ACEzIABCACEILAAAVgAwLQAAVwAQLgAAVgAwLwEAPwAhMAEAPwAhMQEAPwAhMgEAPwAhMyAAQgAhBDABAEcAITEBAEcAITIBAEcAITMgAEgAIQQwAQBHACExAQBHACEyAQBHACEzIABIACEEMAEAAAABMQEAAAABMgEAAAABMyAAAAABBBIAAE8AMEcAAFAAMEkAAFIAIE0AAFMAMAABBAAAXAAgBDABAAAAATEBAAAAATIBAAAAATMgAAAAAQQvAQAAAAE_AQAAAAFAAQAAAAFBAQAAAAECAAAAAQAgEgAAXwAgAwAAAAkAIBIAAF8AIBMAAGMAIAYAAAAJACALAABjACAvAQBHACE_AQBHACFAAQBHACFBAQBHACEELwEARwAhPwEARwAhQAEARwAhQQEARwAhAgQGAgUAAwEDAAEBBAcAAAAAAwUACBgACRkACgAAAAMFAAgYAAkZAAoBAwABAQMAAQMFAA8YABAZABEAAAADBQAPGAAQGQARBgIBBwgBCAsBCQwBCg0BDA8BDREEDhIFDxQBEBYEERcGFBgBFRkBFhoEGh0HGx4LHB8CHSACHiECHyICICMCISUCIicEIygMJCoCJSwEJi0NJy4CKC8CKTAEKjMOKzQS"
 }
 
 async function decodeBase64AsWasm(wasmBase64: string): Promise<WebAssembly.Module> {
@@ -70,8 +70,8 @@ export interface PrismaClientConstructor {
    * const prisma = new PrismaClient({
    *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
    * })
-   * // Fetch zero or more Games
-   * const games = await prisma.game.findMany()
+   * // Fetch zero or more Users
+   * const users = await prisma.user.findMany()
    * ```
    * 
    * Read more in our [docs](https://pris.ly/d/client).
@@ -94,8 +94,8 @@ export interface PrismaClientConstructor {
  * const prisma = new PrismaClient({
  *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
  * })
- * // Fetch zero or more Games
- * const games = await prisma.game.findMany()
+ * // Fetch zero or more Users
+ * const users = await prisma.user.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -189,6 +189,16 @@ export interface PrismaClient<
   }>>
 
       /**
+   * `prisma.user`: Exposes CRUD operations for the **User** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Users
+    * const users = await prisma.user.findMany()
+    * ```
+    */
+  get user(): Prisma.UserDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
    * `prisma.game`: Exposes CRUD operations for the **Game** model.
     * Example usage:
     * ```ts

@@ -182,6 +182,7 @@ export type GameWhereInput = {
   category?: Prisma.StringFilter<"Game"> | string
   description?: Prisma.StringFilter<"Game"> | string
   available?: Prisma.BoolFilter<"Game"> | boolean
+  iduser?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
 export type GameOrderByWithRelationInput = {
@@ -190,6 +191,7 @@ export type GameOrderByWithRelationInput = {
   category?: Prisma.SortOrder
   description?: Prisma.SortOrder
   available?: Prisma.SortOrder
+  iduser?: Prisma.UserOrderByWithRelationInput
 }
 
 export type GameWhereUniqueInput = Prisma.AtLeast<{
@@ -201,6 +203,7 @@ export type GameWhereUniqueInput = Prisma.AtLeast<{
   category?: Prisma.StringFilter<"Game"> | string
   description?: Prisma.StringFilter<"Game"> | string
   available?: Prisma.BoolFilter<"Game"> | boolean
+  iduser?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }, "id">
 
 export type GameOrderByWithAggregationInput = {
@@ -226,11 +229,11 @@ export type GameScalarWhereWithAggregatesInput = {
 }
 
 export type GameCreateInput = {
-  id?: string
   name: string
   category: string
   description: string
   available: boolean
+  iduser?: Prisma.UserCreateNestedOneWithoutGameInput
 }
 
 export type GameUncheckedCreateInput = {
@@ -242,11 +245,11 @@ export type GameUncheckedCreateInput = {
 }
 
 export type GameUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  iduser?: Prisma.UserUpdateOneRequiredWithoutGameNestedInput
 }
 
 export type GameUncheckedUpdateInput = {
@@ -266,7 +269,6 @@ export type GameCreateManyInput = {
 }
 
 export type GameUpdateManyMutationInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
@@ -279,6 +281,16 @@ export type GameUncheckedUpdateManyInput = {
   category?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   available?: Prisma.BoolFieldUpdateOperationsInput | boolean
+}
+
+export type GameListRelationFilter = {
+  every?: Prisma.GameWhereInput
+  some?: Prisma.GameWhereInput
+  none?: Prisma.GameWhereInput
+}
+
+export type GameOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type GameCountOrderByAggregateInput = {
@@ -305,12 +317,129 @@ export type GameMinOrderByAggregateInput = {
   available?: Prisma.SortOrder
 }
 
-export type StringFieldUpdateOperationsInput = {
-  set?: string
+export type GameCreateNestedManyWithoutIduserInput = {
+  create?: Prisma.XOR<Prisma.GameCreateWithoutIduserInput, Prisma.GameUncheckedCreateWithoutIduserInput> | Prisma.GameCreateWithoutIduserInput[] | Prisma.GameUncheckedCreateWithoutIduserInput[]
+  connectOrCreate?: Prisma.GameCreateOrConnectWithoutIduserInput | Prisma.GameCreateOrConnectWithoutIduserInput[]
+  createMany?: Prisma.GameCreateManyIduserInputEnvelope
+  connect?: Prisma.GameWhereUniqueInput | Prisma.GameWhereUniqueInput[]
+}
+
+export type GameUncheckedCreateNestedManyWithoutIduserInput = {
+  create?: Prisma.XOR<Prisma.GameCreateWithoutIduserInput, Prisma.GameUncheckedCreateWithoutIduserInput> | Prisma.GameCreateWithoutIduserInput[] | Prisma.GameUncheckedCreateWithoutIduserInput[]
+  connectOrCreate?: Prisma.GameCreateOrConnectWithoutIduserInput | Prisma.GameCreateOrConnectWithoutIduserInput[]
+  createMany?: Prisma.GameCreateManyIduserInputEnvelope
+  connect?: Prisma.GameWhereUniqueInput | Prisma.GameWhereUniqueInput[]
+}
+
+export type GameUpdateManyWithoutIduserNestedInput = {
+  create?: Prisma.XOR<Prisma.GameCreateWithoutIduserInput, Prisma.GameUncheckedCreateWithoutIduserInput> | Prisma.GameCreateWithoutIduserInput[] | Prisma.GameUncheckedCreateWithoutIduserInput[]
+  connectOrCreate?: Prisma.GameCreateOrConnectWithoutIduserInput | Prisma.GameCreateOrConnectWithoutIduserInput[]
+  upsert?: Prisma.GameUpsertWithWhereUniqueWithoutIduserInput | Prisma.GameUpsertWithWhereUniqueWithoutIduserInput[]
+  createMany?: Prisma.GameCreateManyIduserInputEnvelope
+  set?: Prisma.GameWhereUniqueInput | Prisma.GameWhereUniqueInput[]
+  disconnect?: Prisma.GameWhereUniqueInput | Prisma.GameWhereUniqueInput[]
+  delete?: Prisma.GameWhereUniqueInput | Prisma.GameWhereUniqueInput[]
+  connect?: Prisma.GameWhereUniqueInput | Prisma.GameWhereUniqueInput[]
+  update?: Prisma.GameUpdateWithWhereUniqueWithoutIduserInput | Prisma.GameUpdateWithWhereUniqueWithoutIduserInput[]
+  updateMany?: Prisma.GameUpdateManyWithWhereWithoutIduserInput | Prisma.GameUpdateManyWithWhereWithoutIduserInput[]
+  deleteMany?: Prisma.GameScalarWhereInput | Prisma.GameScalarWhereInput[]
+}
+
+export type GameUncheckedUpdateManyWithoutIduserNestedInput = {
+  create?: Prisma.XOR<Prisma.GameCreateWithoutIduserInput, Prisma.GameUncheckedCreateWithoutIduserInput> | Prisma.GameCreateWithoutIduserInput[] | Prisma.GameUncheckedCreateWithoutIduserInput[]
+  connectOrCreate?: Prisma.GameCreateOrConnectWithoutIduserInput | Prisma.GameCreateOrConnectWithoutIduserInput[]
+  upsert?: Prisma.GameUpsertWithWhereUniqueWithoutIduserInput | Prisma.GameUpsertWithWhereUniqueWithoutIduserInput[]
+  createMany?: Prisma.GameCreateManyIduserInputEnvelope
+  set?: Prisma.GameWhereUniqueInput | Prisma.GameWhereUniqueInput[]
+  disconnect?: Prisma.GameWhereUniqueInput | Prisma.GameWhereUniqueInput[]
+  delete?: Prisma.GameWhereUniqueInput | Prisma.GameWhereUniqueInput[]
+  connect?: Prisma.GameWhereUniqueInput | Prisma.GameWhereUniqueInput[]
+  update?: Prisma.GameUpdateWithWhereUniqueWithoutIduserInput | Prisma.GameUpdateWithWhereUniqueWithoutIduserInput[]
+  updateMany?: Prisma.GameUpdateManyWithWhereWithoutIduserInput | Prisma.GameUpdateManyWithWhereWithoutIduserInput[]
+  deleteMany?: Prisma.GameScalarWhereInput | Prisma.GameScalarWhereInput[]
 }
 
 export type BoolFieldUpdateOperationsInput = {
   set?: boolean
+}
+
+export type GameCreateWithoutIduserInput = {
+  name: string
+  category: string
+  description: string
+  available: boolean
+}
+
+export type GameUncheckedCreateWithoutIduserInput = {
+  name: string
+  category: string
+  description: string
+  available: boolean
+}
+
+export type GameCreateOrConnectWithoutIduserInput = {
+  where: Prisma.GameWhereUniqueInput
+  create: Prisma.XOR<Prisma.GameCreateWithoutIduserInput, Prisma.GameUncheckedCreateWithoutIduserInput>
+}
+
+export type GameCreateManyIduserInputEnvelope = {
+  data: Prisma.GameCreateManyIduserInput | Prisma.GameCreateManyIduserInput[]
+  skipDuplicates?: boolean
+}
+
+export type GameUpsertWithWhereUniqueWithoutIduserInput = {
+  where: Prisma.GameWhereUniqueInput
+  update: Prisma.XOR<Prisma.GameUpdateWithoutIduserInput, Prisma.GameUncheckedUpdateWithoutIduserInput>
+  create: Prisma.XOR<Prisma.GameCreateWithoutIduserInput, Prisma.GameUncheckedCreateWithoutIduserInput>
+}
+
+export type GameUpdateWithWhereUniqueWithoutIduserInput = {
+  where: Prisma.GameWhereUniqueInput
+  data: Prisma.XOR<Prisma.GameUpdateWithoutIduserInput, Prisma.GameUncheckedUpdateWithoutIduserInput>
+}
+
+export type GameUpdateManyWithWhereWithoutIduserInput = {
+  where: Prisma.GameScalarWhereInput
+  data: Prisma.XOR<Prisma.GameUpdateManyMutationInput, Prisma.GameUncheckedUpdateManyWithoutIduserInput>
+}
+
+export type GameScalarWhereInput = {
+  AND?: Prisma.GameScalarWhereInput | Prisma.GameScalarWhereInput[]
+  OR?: Prisma.GameScalarWhereInput[]
+  NOT?: Prisma.GameScalarWhereInput | Prisma.GameScalarWhereInput[]
+  id?: Prisma.StringFilter<"Game"> | string
+  name?: Prisma.StringFilter<"Game"> | string
+  category?: Prisma.StringFilter<"Game"> | string
+  description?: Prisma.StringFilter<"Game"> | string
+  available?: Prisma.BoolFilter<"Game"> | boolean
+}
+
+export type GameCreateManyIduserInput = {
+  name: string
+  category: string
+  description: string
+  available: boolean
+}
+
+export type GameUpdateWithoutIduserInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  available?: Prisma.BoolFieldUpdateOperationsInput | boolean
+}
+
+export type GameUncheckedUpdateWithoutIduserInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  available?: Prisma.BoolFieldUpdateOperationsInput | boolean
+}
+
+export type GameUncheckedUpdateManyWithoutIduserInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  available?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 
@@ -321,6 +450,7 @@ export type GameSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   category?: boolean
   description?: boolean
   available?: boolean
+  iduser?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["game"]>
 
 export type GameSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -329,6 +459,7 @@ export type GameSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   category?: boolean
   description?: boolean
   available?: boolean
+  iduser?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["game"]>
 
 export type GameSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -337,6 +468,7 @@ export type GameSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   category?: boolean
   description?: boolean
   available?: boolean
+  iduser?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["game"]>
 
 export type GameSelectScalar = {
@@ -348,10 +480,21 @@ export type GameSelectScalar = {
 }
 
 export type GameOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "category" | "description" | "available", ExtArgs["result"]["game"]>
+export type GameInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  iduser?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+}
+export type GameIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  iduser?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+}
+export type GameIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  iduser?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+}
 
 export type $GamePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Game"
-  objects: {}
+  objects: {
+    iduser: Prisma.$UserPayload<ExtArgs>
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
@@ -752,6 +895,7 @@ readonly fields: GameFieldRefs;
  */
 export interface Prisma__GameClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  iduser<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -803,6 +947,10 @@ export type GameFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.Internal
    */
   omit?: Prisma.GameOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GameInclude<ExtArgs> | null
+  /**
    * Filter, which Game to fetch.
    */
   where: Prisma.GameWhereUniqueInput
@@ -821,6 +969,10 @@ export type GameFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   omit?: Prisma.GameOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GameInclude<ExtArgs> | null
+  /**
    * Filter, which Game to fetch.
    */
   where: Prisma.GameWhereUniqueInput
@@ -838,6 +990,10 @@ export type GameFindFirstArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    * Omit specific fields from the Game
    */
   omit?: Prisma.GameOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GameInclude<ExtArgs> | null
   /**
    * Filter, which Game to fetch.
    */
@@ -887,6 +1043,10 @@ export type GameFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensions.In
    */
   omit?: Prisma.GameOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GameInclude<ExtArgs> | null
+  /**
    * Filter, which Game to fetch.
    */
   where?: Prisma.GameWhereInput
@@ -934,6 +1094,10 @@ export type GameFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    * Omit specific fields from the Game
    */
   omit?: Prisma.GameOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GameInclude<ExtArgs> | null
   /**
    * Filter, which Games to fetch.
    */
@@ -983,6 +1147,10 @@ export type GameCreateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
    */
   omit?: Prisma.GameOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GameInclude<ExtArgs> | null
+  /**
    * The data needed to create a Game.
    */
   data: Prisma.XOR<Prisma.GameCreateInput, Prisma.GameUncheckedCreateInput>
@@ -1016,6 +1184,10 @@ export type GameCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions
    */
   data: Prisma.GameCreateManyInput | Prisma.GameCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GameIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1030,6 +1202,10 @@ export type GameUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
    * Omit specific fields from the Game
    */
   omit?: Prisma.GameOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GameInclude<ExtArgs> | null
   /**
    * The data needed to update a Game.
    */
@@ -1082,6 +1258,10 @@ export type GameUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions
    * Limit how many Games to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GameIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1096,6 +1276,10 @@ export type GameUpsertArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
    * Omit specific fields from the Game
    */
   omit?: Prisma.GameOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GameInclude<ExtArgs> | null
   /**
    * The filter to search for the Game to update in case it exists.
    */
@@ -1122,6 +1306,10 @@ export type GameDeleteArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
    * Omit specific fields from the Game
    */
   omit?: Prisma.GameOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GameInclude<ExtArgs> | null
   /**
    * Filter which Game to delete.
    */
@@ -1154,4 +1342,8 @@ export type GameDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    * Omit specific fields from the Game
    */
   omit?: Prisma.GameOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GameInclude<ExtArgs> | null
 }
