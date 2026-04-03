@@ -17,9 +17,11 @@ model User {
 
 model Game {
   id String @id @default(uuid())
+  code String @unique
   name String
   category String
   description String
   available Boolean @db.Boolean
-  iduser User @relation(fields: [id], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
 }
