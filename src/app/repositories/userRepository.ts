@@ -5,7 +5,7 @@ import { prisma } from "../../infra/data/lib/prisma";
 export class userRep implements IuserRepository
 {
     async save(user: User): Promise<void> {
-        prisma.user.create({ 
+        await prisma.user.create({ 
             data: {
                 username: user.getName(),
                 email: user.getEmail(),
