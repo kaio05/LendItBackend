@@ -6,8 +6,7 @@ import jwt, { SignOptions } from "jsonwebtoken"
 
 export class userRepository implements IuserRepository
 {
-    async save(user: User): Promise<void> 
-    {
+    async save(user: User): Promise<void> {
         const salt = await genSalt();
         const hashPass = await hash(user.getPassword(), salt);
 
@@ -20,15 +19,8 @@ export class userRepository implements IuserRepository
         });
     }
 
-    async login(email: string, password: string): Promise<string> 
-    {
-        const user = await this.findByEmail(email);
-
-        if (!user) {
-            throw new Error("Email ou senha errados.");
-        }
-
-        const isEqual = await compare(password, user.getPassword());
+    async login(user: User, realUser: User): Promise<string> {
+        const isEqual = await compare(realUser.getPassword(), user.getPassword());
 
         if (!isEqual){
             throw new Error("Email ou senha errados.");
@@ -41,19 +33,8 @@ export class userRepository implements IuserRepository
 
         return token;
     }
-
-    async exit(email: string, password: string): Promise<void>
-    {
-
-    }
-
-    async delete(email: string, password: string): Promise<void> 
-    {
-
-    }
-
-    async findByEmail(email: string): Promise<User | null> 
-    {
+    
+    async findByEmail(email: string): Promise<User | null> {
         const user = await prisma.user.findUnique({ 
             where: { email: email }
         });

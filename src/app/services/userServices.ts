@@ -9,40 +9,23 @@ export class userServices
         this.repository = userRep;
     }
 
-    async create(username: string, email: string, password: string): Promise<User>
-    {
-        const userExists = await this.repository.findByEmail(email);
+    async create(user: User): Promise<void> {
+        const userExists = await this.repository.findByEmail(user.getEmail());
 
         if (userExists) {
             throw new Error("Email já cadastrado.");
         }
-        const user = new User(username, email, password);
 
-        await this.repository.save(user);
-
-        return user;
+        return await this.repository.save(user);
     }
 
-    async login(email: string, password: string) : Promise<string>
-    {
-        const userExists = await this.repository.findByEmail(email);
+    async login(user: User) : Promise<string> {
+        const userExists = await this.repository.findByEmail(user.getEmail());
 
         if (!userExists) {
-            throw new Error("Email ou senha inválidos.")
+            throw new Error("Email ou senha inválidos.");
         }
 
-        const token = await this.repository.login(email, password);
-        
-        return token;
-    }
-
-    async exit()
-    {
-
-    }
-
-    async delete(email: string)
-    {
-
+        return await this.repository.login(user, userExists);
     }
 }
