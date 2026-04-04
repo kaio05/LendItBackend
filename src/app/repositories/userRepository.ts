@@ -33,6 +33,18 @@ export class userRepository implements IuserRepository
 
         return token;
     }
+
+    async remove(user: User, realUser: User): Promise<void> {
+        const isEqual = await compare(user.getPassword(), realUser.getPassword());
+
+        if (!isEqual) {
+            throw new Error("Email ou senha inválidos.");
+        }
+
+        await prisma.user.delete({
+            where: { id: realUser.getId() }
+        })
+    }
     
     async findByEmail(email: string): Promise<User | null> {
         const user = await prisma.user.findUnique({ 
