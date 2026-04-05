@@ -28,8 +28,7 @@ export class userServices
         return await this.repository.save(user);
     }
 
-    async update(token: string, user: Partial<User>): Promise<void>
-    {
+    async update(token: string, user: Partial<User>): Promise<void> {
         const decoded = this.jwtHelp.decode(token);
 
         const userExists = await this.repository.findById(decoded.id);
@@ -53,8 +52,7 @@ export class userServices
         await this.repository.delete(userExists);
     }
 
-    async login(email: string, password: string): Promise<string>
-    {
+    async login(email: string, password: string): Promise<string> {
         const userExists = await this.repository.findByEmail(email);
 
         if (!userExists) {

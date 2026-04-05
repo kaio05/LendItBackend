@@ -3,8 +3,7 @@ import jwt from "jsonwebtoken";
 
 export class jwtHelp implements Ijwt
 {
-    generateToken(id: string): string
-    {
+    generateToken(id: string): string {
         const payload = { id: id };
 
         return jwt.sign(payload, process.env.JWT_PASS || "superSecret", {
@@ -12,8 +11,7 @@ export class jwtHelp implements Ijwt
         });
     }
 
-    decode(token: string): payload
-    {
+    decode(token: string): payload {
         const decode =  jwt.verify(token, process.env.JWT_PASS || "superSecret") as payload;
         return decode;
     }

@@ -4,8 +4,7 @@ import { prisma } from "../../infra/data/lib/prisma";
 
 export class userRepository implements IuserRepository
 {
-    async save(user: User): Promise<void> 
-    {
+    async save(user: User): Promise<void> {
         await prisma.user.create({ 
             data: {
                 username: user.getUsername(),
@@ -15,8 +14,13 @@ export class userRepository implements IuserRepository
         });
     }
 
-    async update(id:string, user: Partial<User>): Promise<void>
-    {
+    async delete(user: User): Promise<void> {
+        await prisma.user.delete({
+            where: { id: user.getId() }
+        });
+    }
+
+    async update(id:string, user: Partial<User>): Promise<void> {
         const oldUser = await this.findById(id);
         if (!oldUser) throw new Error("Usuário não encontrado.");
 
@@ -45,8 +49,7 @@ export class userRepository implements IuserRepository
         });
     }
 
-    async findById(id: string): Promise<User | null> 
-    {
+    async findById(id: string): Promise<User | null> {
         const user = await prisma.user.findUnique({
             where: { id: id }
         });
@@ -68,12 +71,5 @@ export class userRepository implements IuserRepository
         }
 
         return new User(user.username, user.email, user.password, user.id);
-    }
-
-    async delete(user: User): Promise<void> 
-    {
-        await prisma.user.delete({
-            where: { id: user.getId() }
-        });
     }
 }
