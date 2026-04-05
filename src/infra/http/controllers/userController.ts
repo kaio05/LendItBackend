@@ -7,7 +7,8 @@ import { hashHelp } from "../../../app/utils/hashHelp";
 
 import { 
     userSchema, 
-    loginSchema  
+    loginSchema,
+    updateUserSchema  
 } from "../../schemas/userSchema";
 
 import { NextFunction, Request, Response } from "express";
@@ -51,6 +52,28 @@ export class userController
 
             await this.service.delete(token);
             res.status(200).json({ message: "User deleted." });
+        }
+        catch(error){
+            next(error);
+        }
+    }
+
+    async update(req: Request, res: Response, next: NextFunction) {
+        const credential = req.cookies?.jwt as string;
+        if(!credential){
+            return res.status(401).json({ message: "Credential not found." });
+        }
+
+        const newUser = updateUserSchema.safeParse(req.body);
+        if(!newUser.success) {
+            return res.status(400).json({ message: "Invalid format." });
+        }
+
+        try {
+            const token = credential.split("Bearer ")[1];
+
+            await this.service.update(token, newUser.data);
+            res.status(200).json({ message: "User changed." });
         }
         catch(error){
             next(error);

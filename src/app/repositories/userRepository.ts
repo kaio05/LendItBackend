@@ -20,31 +20,13 @@ export class userRepository implements IuserRepository
         });
     }
 
-    async update(id:string, user: Partial<User>): Promise<void> {
-        const oldUser = await this.findById(id);
-        if (!oldUser) throw new Error("Usuário não encontrado.");
-
-        let newEmail = oldUser.getEmail();
-        if (user.getEmail){
-            newEmail = user.getEmail();
-        }
-
-        let newPassword = oldUser.getPassword()
-        if (user.getPassword) {
-            newPassword = user.getPassword();
-        }
-
-        let newUsername = oldUser.getUsername();
-        if (user.getUsername) {
-            newUsername = user.getUsername();
-        }
-
+    async update(user: User): Promise<void> {
         await prisma.user.update({
-            where: { id: id },
+            where: { id: user.getId() },
             data: { 
-                email: newEmail,
-                password: newPassword,
-                username: newUsername
+                email: user.getEmail(),
+                password: user.getPassword(),
+                username: user.getUsername()
             }
         });
     }

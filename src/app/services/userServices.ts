@@ -1,3 +1,4 @@
+import { userDto } from "../dtos/userDto";
 import { User } from "../../domain/entities/user";
 import { Ihash } from "../../domain/Iutils/Ihash";
 import { Ijwt } from "../../domain/Iutils/Ijwt";
@@ -17,7 +18,6 @@ export class userServices
 
     async create(user: User): Promise<void> {
         const userExists = await this.repository.findByEmail(user.getEmail());
-
         if (userExists) {
             throw new Error("Email já cadastrado.");
         }
@@ -28,23 +28,25 @@ export class userServices
         return await this.repository.save(user);
     }
 
-    async update(token: string, user: Partial<User>): Promise<void> {
+    async update(token: string, user: userDto): Promise<void> {
         const decoded = this.jwtHelp.decode(token);
 
         const userExists = await this.repository.findById(decoded.id);
-
         if (!userExists) {
             throw new Error("Erro interno.");
         }
 
-        await this.repository.update(decoded.id, user);
+        const newEmail = user.email? user.email : userExists.getEmail();
+        const newName = user.username? user.username : userExists.getUsername();
+        const newPass = user.password? user.password : userExists.getPassword();
+
+        await this.repository.update(new User(newEmail, newName, newPass));
     }
 
     async delete(token: string): Promise<void> {
         const decoded = this.jwtHelp.decode(token);
         
         const userExists = await this.repository.findById(decoded.id);
-
         if (!userExists) {
             throw new Error("Erro interno.");
         }
@@ -54,13 +56,11 @@ export class userServices
 
     async login(email: string, password: string): Promise<string> {
         const userExists = await this.repository.findByEmail(email);
-
         if (!userExists) {
             throw new Error("Email ou senha inválidos.");
         }
 
         const isEqual = await this.crypt.comparePass(password, userExists.getPassword());
-
         if (!isEqual) {
             throw new Error("Email ou senha inválidos.");
         }

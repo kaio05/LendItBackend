@@ -6,6 +6,12 @@ export const userSchema = z.object({
     password: z.string(),
 });
 
+export const updateUserSchema = z.object({
+    email: z.email().optional(),
+    username: z.string().optional(),
+    password: z.string().optional(),
+});
+
 export const loginSchema = z.object({
     email: z.email(),
     password: z.string()

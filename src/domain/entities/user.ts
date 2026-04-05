@@ -15,10 +15,11 @@ export class User
     getId() { return this.Id; }
 
     getEmail(){ return this.Email; }
+    setEmail(email: string) { this.Email = email }
 
     getPassword() { return this.Password; }
-
-    setPassword(password: string) { this.Password = password}
+    setPassword(password: string) { this.Password = password }
 
     getUsername() { return this.Username; }
+    setUsername(username: string) { this.Username = username } 
 }
