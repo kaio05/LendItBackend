@@ -5,9 +5,9 @@ export class User
     private Email: string;
     private Password: string;
 
-    constructor(name:string, email: string, password: string, id:string = "") {
+    constructor(username:string, email: string, password: string, id:string = "") {
         this.Id = id;
-        this.Username = name;
+        this.Username = username;
         this.Email = email;
         this.Password = password;
     }
@@ -18,5 +18,7 @@ export class User
 
     getPassword() { return this.Password; }
 
-    getName() { return this.Username; }
+    setPassword(password: string) { this.Password = password}
+
+    getUsername() { return this.Username; }
 }

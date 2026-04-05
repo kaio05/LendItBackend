@@ -3,7 +3,8 @@ import { User } from "../entities/user"
 export interface IuserRepository
 {
     save(user: User): Promise<void>;
-    login(user: User, realUser: User): Promise<string>;
-    remove(user: User, realUser: User): Promise<void>;
+    delete(user: User): Promise<void>;
+    update(id: string, user: Partial<User>): Promise<void>;
+    findById(id: string): Promise<User | null>;
     findByEmail(email: string): Promise<User | null>;
 }

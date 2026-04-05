@@ -1,12 +1,18 @@
 import { User } from "../../domain/entities/user";
+import { Ihash } from "../../domain/Iutils/Ihash";
+import { Ijwt } from "../../domain/Iutils/Ijwt";
 import { IuserRepository } from "../../domain/Irepositories/IuserRepository";
 
 export class userServices
 {
     private repository: IuserRepository;
+    private crypt: Ihash;
+    private jwtHelp: Ijwt;
 
-    constructor(userRep: IuserRepository) {
+    constructor(userRep: IuserRepository, crypt: Ihash, jwtHelp: Ijwt) {
         this.repository = userRep;
+        this.crypt = crypt;
+        this.jwtHelp = jwtHelp;
     }
 
     async create(user: User): Promise<void> {
@@ -16,26 +22,51 @@ export class userServices
             throw new Error("Email já cadastrado.");
         }
 
+        const hashPassword = await this.crypt.hashPass(user.getPassword());
+        user.setPassword(hashPassword);
+
         return await this.repository.save(user);
     }
 
-    async login(user: User) : Promise<string> {
-        const userExists = await this.repository.findByEmail(user.getEmail());
+    async update(token: string, user: Partial<User>): Promise<void>
+    {
+        const decoded = this.jwtHelp.decode(token);
+
+        const userExists = await this.repository.findById(decoded.id);
 
         if (!userExists) {
-            throw new Error("Email ou senha inválidos.");
+            throw new Error("Erro interno.");
         }
 
-        return await this.repository.login(user, userExists);
+        await this.repository.update(decoded.id, user);
     }
 
-    async remove(user: User): Promise<void> {
-        const userExists = await this.repository.findByEmail(user.getEmail());
+    async delete(token: string): Promise<void> {
+        const decoded = this.jwtHelp.decode(token);
         
+        const userExists = await this.repository.findById(decoded.id);
+
+        if (!userExists) {
+            throw new Error("Erro interno.");
+        }
+
+        await this.repository.delete(userExists);
+    }
+
+    async login(email: string, password: string): Promise<string>
+    {
+        const userExists = await this.repository.findByEmail(email);
+
         if (!userExists) {
             throw new Error("Email ou senha inválidos.");
         }
 
-        return await this.repository.remove(user, userExists);
+        const isEqual = await this.crypt.comparePass(password, userExists.getPassword());
+
+        if (!isEqual) {
+            throw new Error("Email ou senha inválidos.");
+        }
+
+        return this.jwtHelp.generateToken(userExists.getId());
     }
 }

@@ -1,49 +1,61 @@
 import { User } from "../../domain/entities/user";
 import { IuserRepository } from "../../domain/Irepositories/IuserRepository";
 import { prisma } from "../../infra/data/lib/prisma";
-import { genSalt, hash, compare } from "bcrypt";
-import jwt, { SignOptions } from "jsonwebtoken"
 
 export class userRepository implements IuserRepository
 {
-    async save(user: User): Promise<void> {
-        const salt = await genSalt();
-        const hashPass = await hash(user.getPassword(), salt);
-
+    async save(user: User): Promise<void> 
+    {
         await prisma.user.create({ 
             data: {
-                username: user.getName(),
+                username: user.getUsername(),
                 email: user.getEmail(),
-                password: hashPass,
+                password: user.getPassword(),
             }
         });
     }
 
-    async login(user: User, realUser: User): Promise<string> {
-        const isEqual = await compare(realUser.getPassword(), user.getPassword());
+    async update(id:string, user: Partial<User>): Promise<void>
+    {
+        const oldUser = await this.findById(id);
+        if (!oldUser) throw new Error("Usuário não encontrado.");
 
-        if (!isEqual){
-            throw new Error("Email ou senha errados.");
+        let newEmail = oldUser.getEmail();
+        if (user.getEmail){
+            newEmail = user.getEmail();
         }
 
-        const secret = process.env.JWT_SECRET || "superSecret";
-        const token = jwt.sign({ id: user.getId() }, secret, {
-            expiresIn: (process.env.JWT_EXPIRES_IN || "7d") as SignOptions["expiresIn"]
-        })
+        let newPassword = oldUser.getPassword()
+        if (user.getPassword) {
+            newPassword = user.getPassword();
+        }
 
-        return token;
+        let newUsername = oldUser.getUsername();
+        if (user.getUsername) {
+            newUsername = user.getUsername();
+        }
+
+        await prisma.user.update({
+            where: { id: id },
+            data: { 
+                email: newEmail,
+                password: newPassword,
+                username: newUsername
+            }
+        });
     }
 
-    async remove(user: User, realUser: User): Promise<void> {
-        const isEqual = await compare(user.getPassword(), realUser.getPassword());
+    async findById(id: string): Promise<User | null> 
+    {
+        const user = await prisma.user.findUnique({
+            where: { id: id }
+        });
 
-        if (!isEqual) {
-            throw new Error("Email ou senha inválidos.");
+        if (!user) {
+            return null;
         }
 
-        await prisma.user.delete({
-            where: { id: realUser.getId() }
-        })
+        return new User(user.username, user.email, user.password, user.id);
     }
     
     async findByEmail(email: string): Promise<User | null> {
@@ -56,5 +68,12 @@ export class userRepository implements IuserRepository
         }
 
         return new User(user.username, user.email, user.password, user.id);
+    }
+
+    async delete(user: User): Promise<void> 
+    {
+        await prisma.user.delete({
+            where: { id: user.getId() }
+        });
     }
 }
