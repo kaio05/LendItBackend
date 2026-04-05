@@ -16,10 +16,12 @@ import { NextFunction, Request, Response } from "express";
 export class userController
 {
     private service: userServices = new userServices(
-        new userRepository, new hashHelp, new jwtHelp
+        new userRepository(), 
+        new hashHelp(), 
+        new jwtHelp()
     );
 
-    async create(req: Request, res: Response, next: NextFunction) {
+    create = async (req: Request, res: Response, next: NextFunction) => {
         const result = userSchema.safeParse(req.body);
 
         if (!result.success){
@@ -40,54 +42,53 @@ export class userController
         }
     }
 
-    async delete(req: Request, res: Response, next: NextFunction) {
-        const credential = req.cookies?.jwt as string;
-
-        if(!credential) {
+    delete = async (req: Request, res: Response, next: NextFunction) => {
+        const cookies = this.parseCookies(req.headers.cookie);
+        if(!cookies) {
             return res.status(401).json({ message: "Credential not found." });
         }
 
         try {
-            const token = credential.split("Bearer ")[1];   // remove 'Bearer' and return the token
+            const token = cookies.jwt.split("Bearer")[1];
 
             await this.service.delete(token);
             res.status(200).json({ message: "User deleted." });
         }
-        catch(error){
+        catch (error) {
             next(error);
         }
     }
 
-    async update(req: Request, res: Response, next: NextFunction) {
-        const credential = req.cookies?.jwt as string;
-        if(!credential){
+    update = async (req: Request, res: Response, next: NextFunction) => {
+        const cookies = this.parseCookies(req.headers.cookie);
+        if (!cookies) {
             return res.status(401).json({ message: "Credential not found." });
         }
 
         const newUser = updateUserSchema.safeParse(req.body);
-        if(!newUser.success) {
+        if (!newUser.success) {
             return res.status(400).json({ message: "Invalid format." });
         }
 
         try {
-            const token = credential.split("Bearer ")[1];
+            const token = cookies.jwt.split("Bearer")[1];
 
             await this.service.update(token, newUser.data);
             res.status(200).json({ message: "User changed." });
         }
-        catch(error){
+        catch (error) {
             next(error);
         }
     }
 
-    async find(req: Request, res: Response, next: NextFunction){
-        const credential = req.cookies?.jwt as string;
-        if(!credential) {
+    find = async (req: Request, res: Response, next: NextFunction) => {
+        const cookies = this.parseCookies(req.headers.cookie);
+        if (!cookies) {
             return res.status(401).json({ message: "Credential not found." });
         }
 
         try {
-            const token = credential.split("Bearer ")[1];
+            const token = cookies.jwt.split("Bearer")[1];
 
             const user = await this.service.find(token);
             res.status(200).json({ data: user });
@@ -97,7 +98,7 @@ export class userController
         }
     }
 
-    async login(req: Request, res: Response, next: NextFunction) {
+    login = async (req: Request, res: Response, next: NextFunction) => {
         const result = loginSchema.safeParse(req.body);
 
         if (!result.success) {
@@ -105,14 +106,14 @@ export class userController
         }
 
         let token = "";
-        try{
+        try {
             token = await this.service.login(result.data.email, result.data.password);
         }
-        catch(error){
+        catch (error) {
             next(error);
         }
 
-        res.cookie("jwt", `Bearer ${token}`, {
+        res.cookie("jwt", `Bearer${token}`, {
             httpOnly: true,
             sameSite: "strict",
             secure: process.env.NODE_ENV === "production",  // use https if in production
@@ -122,9 +123,9 @@ export class userController
         res.status(200).json({ message: "logged in." })
     }
 
-    logout(req: Request, res: Response, next: NextFunction) {
-        const credential = req.cookies?.jwt;
-        if (!credential) {
+    logout = (req: Request, res: Response, next: NextFunction) => {
+        const cookies = this.parseCookies(req.headers.cookie);
+        if (!cookies) {
             return res.status(401).json({ message: "Credential not found." });
         }
 
@@ -136,5 +137,20 @@ export class userController
         })
 
         res.status(200).json({ message: "logged out." })
+    }
+
+    private parseCookies = (cookiesHeader: string | undefined): Record<string, string> | undefined => {
+        const cookies: Record<string,string> = {}
+
+        if (!cookiesHeader) {
+            return undefined;
+        }
+
+        cookiesHeader.split(";").forEach(cookie => {
+            const[name, ...rest] = cookie.split("=");
+            cookies[name.trim()] = rest.join("=").trim();
+        });
+
+        return cookies;
     }
 }

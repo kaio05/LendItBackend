@@ -29,6 +29,8 @@ export class userServices
     }
 
     async delete(token: string): Promise<void> {
+        if (!token) throw new Error("Credential not found.");
+
         const decoded = this.jwtHelp.decode(token);
         
         const userExists = await this.repository.findById(decoded.id);
@@ -40,6 +42,8 @@ export class userServices
     }
 
     async update(token: string, user: userDto): Promise<void> {
+        if (!token) throw new Error("Credential not found.");
+
         const decoded = this.jwtHelp.decode(token);
 
         const userExists = await this.repository.findById(decoded.id);
@@ -51,10 +55,13 @@ export class userServices
         const newName = user.username? user.username : userExists.getUsername();
         const newPass = user.password? user.password : userExists.getPassword();
 
-        await this.repository.update(new User(newEmail, newName, newPass));
+        await this.repository.update(new User(newName, newEmail, newPass, userExists.getId()));
+
     }
 
     async find(token: string): Promise<User | null> {
+        if (!token) throw new Error("Credential not found.");
+
         const decoded = this.jwtHelp.decode(token);
         if (!decoded) {
             throw new Error("Erro interno.");
