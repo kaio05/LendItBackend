@@ -102,6 +102,22 @@ export class userController
             expires: new Date(Date.now() + 8 * 3600000)     // 8h
         })
 
-        res.status(200).json({ message: "sucess." })
+        res.status(200).json({ message: "logged in." })
+    }
+
+    async logout(req: Request, res: Response, next: NextFunction) {
+        const credential = req.cookies?.jwt;
+        if (!credential) {
+            return res.status(401).json({ message: "Credential not found." });
+        }
+
+        res.cookie("jwt", "", {
+            httpOnly: true,
+            sameSite: "strict",
+            secure: process.env.NODE_ENV === "production",  // use https if in production
+            expires: new Date(Date.now() - 1)               // Yesterday
+        })
+
+        res.status(200).json({ message: "logged out." })
     }
 }
