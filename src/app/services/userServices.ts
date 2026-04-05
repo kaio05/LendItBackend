@@ -25,7 +25,18 @@ export class userServices
         const hashPassword = await this.crypt.hashPass(user.getPassword());
         user.setPassword(hashPassword);
 
-        return await this.repository.save(user);
+        await this.repository.save(user);
+    }
+
+    async delete(token: string): Promise<void> {
+        const decoded = this.jwtHelp.decode(token);
+        
+        const userExists = await this.repository.findById(decoded.id);
+        if (!userExists) {
+            throw new Error("Erro interno.");
+        }
+
+        await this.repository.delete(userExists);
     }
 
     async update(token: string, user: userDto): Promise<void> {
@@ -43,15 +54,18 @@ export class userServices
         await this.repository.update(new User(newEmail, newName, newPass));
     }
 
-    async delete(token: string): Promise<void> {
+    async find(token: string): Promise<User | null> {
         const decoded = this.jwtHelp.decode(token);
-        
-        const userExists = await this.repository.findById(decoded.id);
-        if (!userExists) {
+        if (!decoded) {
             throw new Error("Erro interno.");
         }
 
-        await this.repository.delete(userExists);
+        const user = await this.repository.findById(decoded.id);
+        if (!user) {
+            return null;
+        }
+
+        return user;
     }
 
     async login(email: string, password: string): Promise<string> {

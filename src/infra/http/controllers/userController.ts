@@ -44,7 +44,7 @@ export class userController
         const credential = req.cookies?.jwt as string;
 
         if(!credential) {
-            return res.status(401).json({ message: "Credentials not found." });
+            return res.status(401).json({ message: "Credential not found." });
         }
 
         try {
@@ -80,6 +80,23 @@ export class userController
         }
     }
 
+    async find(req: Request, res: Response, next: NextFunction){
+        const credential = req.cookies?.jwt as string;
+        if(!credential) {
+            return res.status(401).json({ message: "Credential not found." });
+        }
+
+        try {
+            const token = credential.split("Bearer ")[1];
+
+            const user = await this.service.find(token);
+            res.status(200).json({ data: user });
+        } 
+        catch (error) {
+            next(error);
+        }
+    }
+
     async login(req: Request, res: Response, next: NextFunction) {
         const result = loginSchema.safeParse(req.body);
 
@@ -105,7 +122,7 @@ export class userController
         res.status(200).json({ message: "logged in." })
     }
 
-    async logout(req: Request, res: Response, next: NextFunction) {
+    logout(req: Request, res: Response, next: NextFunction) {
         const credential = req.cookies?.jwt;
         if (!credential) {
             return res.status(401).json({ message: "Credential not found." });
