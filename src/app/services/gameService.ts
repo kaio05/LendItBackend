@@ -1,6 +1,7 @@
 import { Game } from "../../domain/entities/game";
 import { User } from "../../domain/entities/user";
 import { IgameRepository } from "../../domain/Irepositories/IgameRepository";
+import { gameDTO } from "../../infra/data/dto/gameDTO";
 
 export class gameService
 {
@@ -10,12 +11,12 @@ export class gameService
         this.gameRep = gameRep;
     }
 
-    async create(game: Game): Promise<void> {
-        const found = await this.gameRep.findByCode(game);
+    async create(game: Game): Promise<gameDTO> {
+        const found: gameDTO | null = await this.gameRep.findByCode(game);
 
         if (found) throw new Error("Jogo já cadastrado");
 
-        const saved = await this.gameRep.save(game);
+        const saved: gameDTO = await this.gameRep.save(game);
 
         return saved;
     }
