@@ -51,6 +51,14 @@ export class userServices
             throw new Error("Erro interno.");
         }
 
+        if (user.email) {
+            const emailExists = await this.repository.findByEmail(user.email);
+
+            if (emailExists) {
+                throw new Error("Email already in use.");
+            }
+        }
+
         const newEmail = user.email? user.email : userExists.getEmail();
         const newName = user.username? user.username : userExists.getUsername();
         const newPass = user.password? user.password : userExists.getPassword();
