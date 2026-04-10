@@ -1,5 +1,4 @@
 import { Game } from "../../domain/entities/game";
-import { User } from "../../domain/entities/user";
 import { IgameRepository } from "../../domain/Irepositories/IgameRepository";
 import { gameDTO } from "../../infra/data/dto/gameDTO";
 import { prisma } from "../../infra/data/lib/prisma";
@@ -29,5 +28,9 @@ export class gameRep implements IgameRepository
         })
 
         return foundGame
+    }
+
+    async getAll(): Promise<gameDTO[] | []> {
+        return await prisma.game.findMany()
     }
 }

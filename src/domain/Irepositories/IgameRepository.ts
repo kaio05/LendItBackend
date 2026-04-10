@@ -5,4 +5,5 @@ export interface IgameRepository
 {
     save(game: Game): Promise<gameDTO>;
     findByCode(game: Game): Promise<gameDTO | null>;
+    getAll(): Promise<gameDTO[] | []>
 }

@@ -20,4 +20,8 @@ export class gameService
 
         return saved;
     }
+
+    async getAll(): Promise<gameDTO[] | []> {
+        return await this.gameRep.getAll();
+    }
 }
