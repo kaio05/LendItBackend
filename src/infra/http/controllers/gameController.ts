@@ -31,6 +31,17 @@ export class GameController {
         }
     }
 
+    delete = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const body = req.body
+            const toDelete: gameDTO = body
+            const updated = await this.service.delete(toDelete)
+            res.status(204).json({message: "deleted"})
+        } catch (error) {
+            next(error)
+        }
+    }
+
     getAll = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const gameList = await this.service.getAll()

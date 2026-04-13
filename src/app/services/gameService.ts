@@ -42,6 +42,16 @@ export class GameService
         return updated;
     }
 
+    async delete(game: gameDTO): Promise<void> {
+        const found: gameDTO | null = await this.repository.findByCode(game);
+
+        if (!found) throw new Error("Jogo não cadastrado");
+
+        await this.repository.delete(game);
+
+        return;
+    }
+
     async getAll(): Promise<gameDTO[] | []> {
         return await this.repository.getAll();
     }

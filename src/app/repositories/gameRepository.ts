@@ -29,6 +29,10 @@ export class GameRepository implements IgameRepository
         return updated
     }
 
+    async delete(game: gameDTO): Promise<void> {
+        await prisma.game.delete({where: {code: game.code}})
+    }
+
     async findByCode(game: gameDTO): Promise<gameDTO | null> {
         const foundGame: gameDTO | null = await prisma.game.findUnique({
             where: {
