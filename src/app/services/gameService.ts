@@ -3,25 +3,25 @@ import { User } from "../../domain/entities/user";
 import { IgameRepository } from "../../domain/Irepositories/IgameRepository";
 import { gameDTO } from "../../infra/data/dto/gameDTO";
 
-export class gameService
+export class GameService
 {
-    private gameRep: IgameRepository;
+    private repository: IgameRepository;
 
     constructor(gameRep: IgameRepository) {
-        this.gameRep = gameRep;
+        this.repository = gameRep;
     }
 
     async create(game: Game): Promise<gameDTO> {
-        const found: gameDTO | null = await this.gameRep.findByCode(game);
+        const found: gameDTO | null = await this.repository.findByCode(game);
 
         if (found) throw new Error("Jogo já cadastrado");
 
-        const saved: gameDTO = await this.gameRep.save(game);
+        const saved: gameDTO = await this.repository.save(game);
 
         return saved;
     }
 
     async getAll(): Promise<gameDTO[] | []> {
-        return await this.gameRep.getAll();
+        return await this.repository.getAll();
     }
 }
