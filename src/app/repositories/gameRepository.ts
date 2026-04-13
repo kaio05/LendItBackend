@@ -3,7 +3,7 @@ import { IgameRepository } from "../../domain/Irepositories/IgameRepository";
 import { gameDTO } from "../../infra/data/dto/gameDTO";
 import { prisma } from "../../infra/data/lib/prisma";
 
-export class gameRep implements IgameRepository
+export class GameRepository implements IgameRepository
 {
     async save(game: Game): Promise<gameDTO> {
         const newGame: gameDTO = await prisma.game.create({
