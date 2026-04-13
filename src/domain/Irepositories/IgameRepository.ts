@@ -3,7 +3,8 @@ import { Game } from "../entities/game";
 
 export interface IgameRepository
 {
-    save(game: Game): Promise<gameDTO>;
-    findByCode(game: Game): Promise<gameDTO | null>;
-    getAll(): Promise<gameDTO[] | []>
+    save(game: gameDTO): Promise<gameDTO>;
+    findByCode(game: gameDTO): Promise<gameDTO | null>;
+    update(game: gameDTO): Promise<gameDTO | null>;
+    getAll(): Promise<gameDTO[] | []>;
 }

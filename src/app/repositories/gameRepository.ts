@@ -5,25 +5,34 @@ import { prisma } from "../../infra/data/lib/prisma";
 
 export class GameRepository implements IgameRepository
 {
-    async save(game: Game): Promise<gameDTO> {
+    async save(game: gameDTO): Promise<gameDTO> {
         const newGame: gameDTO = await prisma.game.create({
             data: {
-                userId: game.getUserId(),
-                code: game.getCode(),
-                name: game.getName(),
-                category: game.getCategory(),
-                description: game.getDescription(),
-                available: game.getAvailable(),
+                userId: game.userId!,
+                code: game.code,
+                name: game.name!,
+                category: game.category!,
+                description: game.description!,
+                available: game.available!,
             }
         })
 
         return newGame
     }
 
-    async findByCode(game: Game): Promise<gameDTO | null> {
+    async update(game: gameDTO): Promise<gameDTO> {
+        const updated: gameDTO = await prisma.game.update({
+            where: {id: game.id},
+            data: {...game}
+        })
+
+        return updated
+    }
+
+    async findByCode(game: gameDTO): Promise<gameDTO | null> {
         const foundGame: gameDTO | null = await prisma.game.findUnique({
             where: {
-                code: game.getCode()
+                code: game.code
             }
         })
 

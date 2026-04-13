@@ -11,7 +11,7 @@ export class GameService
         this.repository = gameRep;
     }
 
-    async create(game: Game): Promise<gameDTO> {
+    async create(game: gameDTO): Promise<gameDTO> {
         const found: gameDTO | null = await this.repository.findByCode(game);
 
         if (found) throw new Error("Jogo já cadastrado");
@@ -19,6 +19,27 @@ export class GameService
         const saved: gameDTO = await this.repository.save(game);
 
         return saved;
+    }
+
+    async update(game: gameDTO): Promise<gameDTO | null> {
+
+        const found: gameDTO | null = await this.repository.findByCode(game);
+
+        if (!found) throw new Error("Jogo não cadastrado");
+
+        const toUpdate: gameDTO = {
+            id: found.id,
+            userId: found.userId,
+            code: found.code,
+            name: game.name || found.name,
+            category: game.category || found.category,
+            description: game.description || found.description,
+            available: game.available || found.available
+        }
+
+        const updated: gameDTO | null = await this.repository.update(toUpdate);
+
+        return updated;
     }
 
     async getAll(): Promise<gameDTO[] | []> {

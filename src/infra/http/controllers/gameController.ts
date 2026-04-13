@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { GameService } from "../../../app/services/gameService";
 import { Game } from "../../../domain/entities/game";
 import { GameRepository } from "../../../app/repositories/gameRepository";
+import { gameDTO } from "../../data/dto/gameDTO";
 
 export class GameController {
     private service: GameService = new GameService(
@@ -11,8 +12,20 @@ export class GameController {
     create = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const body = req.body
-            const game = await this.service.create(new Game(body.userId, body.code, body.name, body.category, body.description))
+            const newGame: gameDTO = {...body}
+            const created = await this.service.create(newGame)
             res.status(201).json({message: "created"})
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    update = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const body = req.body
+            const toUpdate: gameDTO = {...body}
+            const updated = await this.service.update(toUpdate)
+            res.status(204).json({message: "updated"})
         } catch (error) {
             next(error)
         }

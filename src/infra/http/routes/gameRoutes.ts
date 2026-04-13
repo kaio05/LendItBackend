@@ -6,5 +6,6 @@ const controller: GameController = new GameController();
 
 gameRoute.post("/", controller.create);
 gameRoute.get("/", controller.getAll);
+gameRoute.patch("/", controller.update);
 
 export default gameRoute
