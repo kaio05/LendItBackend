@@ -11,7 +11,7 @@ export class GameController {
     create = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const body = req.body
-            const game = this.service.create(new Game(body.userId, body.code, body.name, body.category, body.description))
+            const game = await this.service.create(new Game(body.userId, body.code, body.name, body.category, body.description))
             res.status(201).json({message: "created"})
         } catch (error) {
             next(error)
