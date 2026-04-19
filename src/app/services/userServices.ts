@@ -3,6 +3,7 @@ import { User } from "../../domain/entities/user";
 import { Ihash } from "../../domain/Iutils/Ihash";
 import { Ijwt } from "../../domain/Iutils/Ijwt";
 import { IuserRepository } from "../../domain/Irepositories/IuserRepository";
+import { TokenResponse } from "../../infra/types/tokenResponse";
 
 export class userServices
 {
@@ -29,9 +30,8 @@ export class userServices
     }
 
     async delete(token: string): Promise<void> {
-        if (!token) throw new Error("Credential not found.");
 
-        const decoded = this.jwtHelp.decode(token);
+        const decoded = this.jwtHelp.decodeAccessToken(token);
         
         const userExists = await this.repository.findById(decoded.id);
         if (!userExists) {
@@ -42,9 +42,8 @@ export class userServices
     }
 
     async update(token: string, user: userDto): Promise<void> {
-        if (!token) throw new Error("Credential not found.");
 
-        const decoded = this.jwtHelp.decode(token);
+        const decoded = this.jwtHelp.decodeAccessToken(token);
 
         const userExists = await this.repository.findById(decoded.id);
         if (!userExists) {
@@ -68,9 +67,8 @@ export class userServices
     }
 
     async find(token: string): Promise<User | null> {
-        if (!token) throw new Error("Credential not found.");
 
-        const decoded = this.jwtHelp.decode(token);
+        const decoded = this.jwtHelp.decodeAccessToken(token);
         if (!decoded) {
             throw new Error("Erro interno.");
         }
@@ -83,7 +81,7 @@ export class userServices
         return user;
     }
 
-    async login(email: string, password: string): Promise<string> {
+    async login(email: string, password: string): Promise<TokenResponse> {
         const userExists = await this.repository.findByEmail(email);
         if (!userExists) {
             throw new Error("Email ou senha inválidos.");
@@ -94,6 +92,24 @@ export class userServices
             throw new Error("Email ou senha inválidos.");
         }
 
-        return this.jwtHelp.generateToken(userExists.getId());
+        const accessToken = this.jwtHelp.generateAccessToken(userExists.getId());
+
+        const refreshToken = this.jwtHelp.generateRefreshToken(userExists.getId());
+
+        const tokens = {accessToken: accessToken, refreshToken: refreshToken};
+
+        return tokens;
+    }
+
+    async refresh(token: string): Promise<string> {
+        
+        const response = await this.jwtHelp.verify(
+            token,
+            process.env.REFRESH_TOKEN_SECRET || "superSecret"
+        )
+
+        const accessToken = this.jwtHelp.generateAccessToken(response.decoded.id);
+
+        return accessToken;
     }
 }

@@ -12,6 +12,7 @@ import {
 } from "../../schemas/userSchema";
 
 import { NextFunction, Request, Response } from "express";
+import { TokenResponse } from "../../types/tokenResponse";
 
 export class userController
 {
@@ -43,13 +44,8 @@ export class userController
     }
 
     delete = async (req: Request, res: Response, next: NextFunction) => {
-        const cookies = this.parseCookies(req.headers.cookie);
-        if(!cookies) {
-            return res.status(401).json({ message: "Credential not found." });
-        }
-
         try {
-            const token = cookies.jwt.split("Bearer")[1];
+            const token = req.headers['authorization']!.split(' ')[1];
 
             await this.service.delete(token);
             res.status(200).json({ message: "User deleted." });
@@ -60,18 +56,13 @@ export class userController
     }
 
     update = async (req: Request, res: Response, next: NextFunction) => {
-        const cookies = this.parseCookies(req.headers.cookie);
-        if (!cookies) {
-            return res.status(401).json({ message: "Credential not found." });
-        }
-
         const newUser = updateUserSchema.safeParse(req.body);
         if (!newUser.success) {
             return res.status(400).json({ message: "Invalid format." });
         }
 
         try {
-            const token = cookies.jwt.split("Bearer")[1];
+            const token = req.headers['authorization']!.split(' ')[1];
 
             await this.service.update(token, newUser.data);
             res.status(200).json({ message: "User changed." });
@@ -82,14 +73,8 @@ export class userController
     }
 
     find = async (req: Request, res: Response, next: NextFunction) => {
-        const cookies = this.parseCookies(req.headers.cookie);
-        if (!cookies) {
-            return res.status(401).json({ message: "Credential not found." });
-        }
-
         try {
-            const token = cookies.jwt.split("Bearer")[1];
-
+            const token = req.headers['authorization']!.split(' ')[1];
             const user = await this.service.find(token);
             res.status(200).json({ data: user });
         } 
@@ -105,30 +90,29 @@ export class userController
             return res.status(400).json({ message: "Invalid format." })
         }
 
-        let token = "";
+        let tokens: TokenResponse = {'accessToken':'', 'refreshToken':''};
         try {
-            token = await this.service.login(result.data.email, result.data.password);
+            tokens = await this.service.login(result.data.email, result.data.password);
         }
         catch (error) {
             next(error);
         }
 
-        res.cookie("jwt", `Bearer${token}`, {
+        console.log(tokens.refreshToken)
+        res.cookie("jwt", tokens.refreshToken, {
             httpOnly: true,
             sameSite: "strict",
             secure: process.env.NODE_ENV === "production",  // use https if in production
             expires: new Date(Date.now() + 8 * 3600000)     // 8h
         })
 
-        res.status(200).json({ message: "logged in." })
+        const accessToken = tokens.accessToken;
+
+        res.status(200).json({accessToken});
     }
 
     logout = (req: Request, res: Response, next: NextFunction) => {
-        const cookies = this.parseCookies(req.headers.cookie);
-        if (!cookies) {
-            return res.status(401).json({ message: "Credential not found." });
-        }
-
+        
         res.cookie("jwt", "", {
             httpOnly: true,
             sameSite: "strict",
@@ -139,18 +123,13 @@ export class userController
         res.status(200).json({ message: "logged out." })
     }
 
-    private parseCookies = (cookiesHeader: string | undefined): Record<string, string> | undefined => {
-        const cookies: Record<string,string> = {}
-
-        if (!cookiesHeader) {
-            return undefined;
-        }
-
-        cookiesHeader.split(";").forEach(cookie => {
-            const[name, ...rest] = cookie.split("=");
-            cookies[name.trim()] = rest.join("=").trim();
-        });
-
-        return cookies;
+    refresh = async (req: Request, res: Response, next: NextFunction) => {
+        const cookies = req.cookies;
+        console.log("cookies: " + cookies)
+        if (!cookies?.jwt) return res.sendStatus(401);
+        console.log("jwt: " + cookies.jwt);
+        const refreshToken = cookies.jwt;
+        const accessToken = await this.service.refresh(refreshToken);
+        res.status(200).json({accessToken});
     }
 }
