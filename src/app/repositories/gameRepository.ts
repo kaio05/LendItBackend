@@ -32,7 +32,7 @@ export class gameRep implements IgameRepository
         })
 
         if (foundGame && foundGameUser) {
-            return new Game(new User(foundGameUser!.id, foundGameUser!.username, foundGameUser!.email, foundGameUser?.password), foundGame.code, foundGame.name, foundGame.category, foundGame.description, foundGame.available)
+            return new Game(new User(foundGameUser!.email, foundGameUser!.password, foundGameUser!.username, foundGameUser?.picturePath, foundGameUser?.id), foundGame.code, foundGame.name, foundGame.category, foundGame.description, foundGame.available);
         }
     }
 }

@@ -1,15 +1,17 @@
 export class User
 {
     private Id: string;
-    private Username: string;
     private Email: string;
     private Password: string;
+    private Username: string;
+    private picturePath: string;
 
-    constructor(name:string, email: string, password: string, id:string = "") {
+    constructor(email: string, password: string, username:string, picPath: string = "", id:string = "") {
         this.Id = id;
-        this.Username = name;
         this.Email = email;
         this.Password = password;
+        this.Username = username;
+        this.picturePath = picPath;
     }
 
     getId() { return this.Id; }
@@ -17,6 +19,9 @@ export class User
     getEmail(){ return this.Email; }
 
     getPassword() { return this.Password; }
+    setPassword(password: string) { this.Password = password }
 
-    getName() { return this.Username; }
+    getUsername() { return this.Username; }
+
+    getPicturePath() { return this.picturePath; }
 }
