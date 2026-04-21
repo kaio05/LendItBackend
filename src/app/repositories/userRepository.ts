@@ -7,9 +7,10 @@ export class userRepository implements IuserRepository
     async save(user: User): Promise<void> {
         await prisma.user.create({ 
             data: {
-                username: user.getUsername(),
                 email: user.getEmail(),
                 password: user.getPassword(),
+                username: user.getUsername(),
+                picturePath: user.getPicturePath()
             }
         });
     }
@@ -26,7 +27,8 @@ export class userRepository implements IuserRepository
             data: { 
                 email: user.getEmail(),
                 password: user.getPassword(),
-                username: user.getUsername()
+                username: user.getUsername(),
+                picturePath: user.getPicturePath()
             }
         });
     }
@@ -40,7 +42,7 @@ export class userRepository implements IuserRepository
             return null;
         }
 
-        return new User(user.username, user.email, user.password, user.id);
+        return new User(user.email, user.password, user.username, user.picturePath, user.id);
     }
     
     async findByEmail(email: string): Promise<User | null> {
@@ -52,6 +54,6 @@ export class userRepository implements IuserRepository
             return null;
         }
 
-        return new User(user.username, user.email, user.password, user.id);
+        return new User(user.email, user.password, user.username, user.picturePath, user.id);
     }
 }

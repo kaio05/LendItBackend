@@ -18,6 +18,7 @@ export class userServices
     }
 
     async create(user: User): Promise<void> {
+
         const userExists = await this.repository.findByEmail(user.getEmail());
         if (userExists) {
             throw new Error("Email já cadastrado.");
@@ -61,9 +62,9 @@ export class userServices
         const newEmail = user.email? user.email : userExists.getEmail();
         const newName = user.username? user.username : userExists.getUsername();
         const newPass = user.password? user.password : userExists.getPassword();
+        const newPath = user.picturePath? user.picturePath: userExists.getPicturePath();
 
-        await this.repository.update(new User(newName, newEmail, newPass, userExists.getId()));
-
+        await this.repository.update(new User(newEmail, newPass, newName, newPath, userExists.getId()));
     }
 
     async find(token: string): Promise<User | null> {
@@ -82,6 +83,7 @@ export class userServices
     }
 
     async login(email: string, password: string): Promise<TokenResponse> {
+
         const userExists = await this.repository.findByEmail(email);
         if (!userExists) {
             throw new Error("Email ou senha inválidos.");

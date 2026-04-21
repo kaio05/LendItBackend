@@ -1,4 +1,3 @@
-import { Response } from "express";
 import { JWTVerifyResponse } from "../../app/utils/jwtHelp";
 
 export type payload = {

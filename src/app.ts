@@ -1,8 +1,7 @@
 import express from 'express';
-// import itemRoutes from './infra/routes/itemRoutes';
+import cookieParser from "cookie-parser";
+import userRoutes from "./infra/http/routes/userRoutes";
 import { errorHandler } from './infra/middlewares/errorHandler';
-import  userRoutes from "./infra/http/routes/userRoutes";
-import cookieParser from "cookie-parser"
 
 const app = express();
 

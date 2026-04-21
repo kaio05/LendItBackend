@@ -8,8 +8,9 @@ export const userSchema = z.object({
 
 export const updateUserSchema = z.object({
     email: z.email().optional(),
-    username: z.string().optional(),
     password: z.string().optional(),
+    username: z.string().optional(),
+    picture: z.file().optional()
 });
 
 export const loginSchema = z.object({
