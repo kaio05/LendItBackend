@@ -1,38 +1,53 @@
 import { Game } from "../../domain/entities/game";
-import { User } from "../../domain/entities/user";
 import { IgameRepository } from "../../domain/Irepositories/IgameRepository";
+import { gameDTO } from "../../infra/data/dto/gameDTO";
 import { prisma } from "../../infra/data/lib/prisma";
 
-export class gameRep implements IgameRepository
+export class GameRepository implements IgameRepository
 {
-    async save(game: Game): Promise<void> {
-        await prisma.game.create({
+    async save(game: gameDTO): Promise<gameDTO> {
+        const newGame: gameDTO = await prisma.game.create({
             data: {
-                userId: game.getUser().getId(),
-                code: game.getCode(),
-                name: game.getName(),
-                category: game.getCategory(),
-                description: game.getDescription(),
-                available: game.getAvailable(),
+                userId: game.userId!,
+                code: game.code,
+                name: game.name!,
+                category: game.category!,
+                description: game.description!,
+                available: true,
             }
         })
+
+        return newGame
     }
 
-    async findByCode(game: Game): Promise<Game | void> {
-        const foundGame = await prisma.game.findUnique({
+    async update(game: gameDTO): Promise<gameDTO> {
+        const updated: gameDTO = await prisma.game.update({
+            where: {id: game.id},
+            data: {...game}
+        })
+
+        return updated
+    }
+
+    async delete(game: gameDTO): Promise<void> {
+        await prisma.game.delete({where: {code: game.code}})
+    }
+
+    async findByCode(game: gameDTO): Promise<gameDTO | null> {
+        const foundGame: gameDTO | null = await prisma.game.findUnique({
             where: {
-                code: game.getCode()
+                code: game.code
             }
         })
 
-        const foundGameUser = await prisma.user.findUnique({
+        return foundGame
+    }
+
+    async getAll(id: string): Promise<gameDTO[] | []> {
+        return await prisma.game.findMany({
             where: {
-                email: game.getUser().getEmail()
+                userId: id
             }
         })
-
-        if (foundGame && foundGameUser) {
-            return new Game(new User(foundGameUser!.email, foundGameUser!.password, foundGameUser!.username, foundGameUser?.picturePath, foundGameUser?.id), foundGame.code, foundGame.name, foundGame.category, foundGame.description, foundGame.available);
-        }
     }
 }

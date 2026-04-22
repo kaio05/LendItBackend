@@ -3,16 +3,16 @@ import { User } from "./user";
 export class Game 
 {
     private Id: string;
-    private User: User;
+    private UserId: string;
     private Code: string;
     private Name: string;
     private Description: string;
     private Category: string;
     private Available: boolean;
 
-    constructor(user: User, code: string, name: string, category: string, description: string, available: boolean = true, id: string = "") {
+    constructor(userId: string, code: string, name: string, category: string, description: string, available: boolean = true, id: string = "") {
         this.Id = id;
-        this.User = user;
+        this.UserId = userId;
         this.Code = code;
         this.Name = name;
         this.Category = category;
@@ -22,7 +22,7 @@ export class Game
 
     getId() { return this.Id; }
 
-    getUser() { return this.User; }
+    getUserId() { return this.UserId; }
 
     getCode() { return this.Code; }
 
