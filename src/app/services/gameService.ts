@@ -1,31 +1,49 @@
 import { Game } from "../../domain/entities/game";
 import { User } from "../../domain/entities/user";
 import { IgameRepository } from "../../domain/Irepositories/IgameRepository";
+import { IuserRepository } from "../../domain/Irepositories/IuserRepository";
+import { Ijwt } from "../../domain/Iutils/Ijwt";
 import { gameDTO } from "../../infra/data/dto/gameDTO";
 
 export class GameService
 {
     private repository: IgameRepository;
+    private userRepository: IuserRepository;
+    private jwtHelp: Ijwt;
 
-    constructor(gameRep: IgameRepository) {
+    constructor(gameRep: IgameRepository, userRep: IuserRepository, jwtHelp: Ijwt) {
         this.repository = gameRep;
+        this.userRepository = userRep;
+        this.jwtHelp = jwtHelp;
     }
 
-    async create(game: gameDTO): Promise<gameDTO> {
+    async create(token: string, game: gameDTO): Promise<gameDTO> {
+        const decoded = this.jwtHelp.decodeAccessToken(token);
+        
+        const userExists = await this.userRepository.findById(decoded.id);
+        if (!userExists) {
+            throw new Error("Erro interno.");
+        }
+
         const found: gameDTO | null = await this.repository.findByCode(game);
 
         if (found) throw new Error("Jogo já cadastrado");
 
+        game.userId = decoded.id;
         const saved: gameDTO = await this.repository.save(game);
 
         return saved;
     }
 
-    async update(game: gameDTO): Promise<gameDTO | null> {
+    async update(token: string, game: gameDTO): Promise<gameDTO | null> {
 
         const found: gameDTO | null = await this.repository.findByCode(game);
 
         if (!found) throw new Error("Jogo não cadastrado");
+
+        const decoded = this.jwtHelp.decodeAccessToken(token);
+
+        if (found.userId != decoded.id) throw new Error("Usuário incorreto")
 
         const toUpdate: gameDTO = {
             id: found.id,
@@ -42,17 +60,22 @@ export class GameService
         return updated;
     }
 
-    async delete(game: gameDTO): Promise<void> {
+    async delete(token: string, game: gameDTO): Promise<void> {
         const found: gameDTO | null = await this.repository.findByCode(game);
 
         if (!found) throw new Error("Jogo não cadastrado");
+
+        const decoded = this.jwtHelp.decodeAccessToken(token);
+
+        if (found.userId != decoded.id) throw new Error("Usuário incorreto")
 
         await this.repository.delete(game);
 
         return;
     }
 
-    async getAll(): Promise<gameDTO[] | []> {
-        return await this.repository.getAll();
+    async getAll(token: string): Promise<gameDTO[] | []> {
+        const decoded = this.jwtHelp.decodeAccessToken(token);
+        return await this.repository.getAll(decoded.id);
     }
 }

@@ -7,5 +7,5 @@ export interface IgameRepository
     findByCode(game: gameDTO): Promise<gameDTO | null>;
     update(game: gameDTO): Promise<gameDTO | null>;
     delete(game: gameDTO): Promise<void>
-    getAll(): Promise<gameDTO[] | []>;
+    getAll(id: string): Promise<gameDTO[] | []>;
 }

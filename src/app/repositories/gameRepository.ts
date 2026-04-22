@@ -13,7 +13,7 @@ export class GameRepository implements IgameRepository
                 name: game.name!,
                 category: game.category!,
                 description: game.description!,
-                available: game.available!,
+                available: true,
             }
         })
 
@@ -43,7 +43,11 @@ export class GameRepository implements IgameRepository
         return foundGame
     }
 
-    async getAll(): Promise<gameDTO[] | []> {
-        return await prisma.game.findMany()
+    async getAll(id: string): Promise<gameDTO[] | []> {
+        return await prisma.game.findMany({
+            where: {
+                userId: id
+            }
+        })
     }
 }

@@ -29,3 +29,6 @@ logs
 /prisma/src/prisma
 
 /generated/prisma
+
+# Upload files
+/uploads
