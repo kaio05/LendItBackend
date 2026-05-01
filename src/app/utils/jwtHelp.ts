@@ -5,6 +5,7 @@ export type JWTVerifyResponse = {
     err: any,
     decoded: any
 }
+
 export class jwtHelp implements Ijwt
 {
     generateAccessToken(id: string): string {

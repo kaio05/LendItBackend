@@ -1,4 +1,4 @@
-import { gameDTO } from "../../infra/data/dto/gameDTO";
+import { gameDTO } from "../../app/DTOs/gameDTO";
 
 export interface IgameRepository
 {

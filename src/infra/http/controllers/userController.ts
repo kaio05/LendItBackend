@@ -3,23 +3,22 @@ import { User } from "../../../domain/entities/user";
 import { userRepository } from "../../../app/repositories/userRepository";
 import { userServices } from "../../../app/services/userServices";
 import { jwtHelp } from "../../../app/utils/jwtHelp";
-import { hashHelp } from "../../../app/utils/hashHelp";
-
-import { userSchema, loginSchema, updateUserSchema } from "../../schemas/userSchema";
+import { bcryptHash } from "../../../app/utils/bcryptHash";
+import { TokenResponse } from "../../../app/DTOs/tokenResponse";
 
 import { NextFunction, Request, Response } from "express";
-import { TokenResponse } from "../../types/tokenResponse";
+import { createUserSchema, updateUserSchema, loginSchema } from "../../schemas/userSchema";
 
 export class userController
 {
     private service: userServices = new userServices(
         new userRepository(), 
-        new hashHelp(), 
+        new bcryptHash(), 
         new jwtHelp()
     );
 
     create = async (req: Request, res: Response, next: NextFunction) => {
-        const result = userSchema.safeParse(req.body);
+        const result = createUserSchema.safeParse(req.body);
 
         if (!result.success){
             return res.status(400).json({
