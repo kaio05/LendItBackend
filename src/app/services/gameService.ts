@@ -1,5 +1,3 @@
-import { Game } from "../../domain/entities/game";
-import { User } from "../../domain/entities/user";
 import { IgameRepository } from "../../domain/Irepositories/IgameRepository";
 import { IuserRepository } from "../../domain/Irepositories/IuserRepository";
 import { Ijwt } from "../../domain/Iutils/Ijwt";

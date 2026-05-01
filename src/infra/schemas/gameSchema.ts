@@ -6,4 +6,3 @@ export const gameSchema = z.object({
     category: z.string(),
     description: z.string()
 });
-
