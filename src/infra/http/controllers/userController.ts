@@ -4,7 +4,7 @@ import { userRepository } from "../../../app/repositories/userRepository";
 import { userServices } from "../../../app/services/userServices";
 import { jwtHelp } from "../../../app/utils/jwtHelp";
 import { bcryptHash } from "../../../app/utils/bcryptHash";
-import { TokenResponse } from "../../../app/DTOs/tokenResponse";
+import { TokenResponse } from "../../../app/dtos/tokenResponse";
 
 import { NextFunction, Request, Response } from "express";
 import { createUserSchema, updateUserSchema, loginSchema } from "../../schemas/userSchema";
@@ -42,6 +42,7 @@ export class userController
             const token = req.headers['authorization']!.split(' ')[1];
 
             await this.service.delete(token);
+            res.clearCookie("jwt");
 
             res.status(200).json({ message: "User deleted." });
         }
@@ -115,13 +116,7 @@ export class userController
 
     logout = (req: Request, res: Response, next: NextFunction) => {
         try {
-            res.cookie("jwt", "", {
-                httpOnly: true,
-                sameSite: "strict",
-                secure: process.env.NODE_ENV === "production",  // use https if in production
-                expires: new Date(Date.now() - 1)               // Yesterday
-            });
-
+            res.clearCookie("jwt");
             res.status(200).json({ message: "logged out." });
         } catch (error) {
             next(error);

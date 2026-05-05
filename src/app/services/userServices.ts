@@ -2,8 +2,8 @@ import { User } from "../../domain/entities/user";
 import { Ihash } from "../../domain/Iutils/Ihash";
 import { Ijwt } from "../../domain/Iutils/Ijwt";
 import { IuserRepository } from "../../domain/Irepositories/IuserRepository";
-import { userDto } from "../DTOs/userDto";
-import { TokenResponse } from "../DTOs/tokenResponse";
+import { userDto } from "../dtos/userDto";
+import { TokenResponse } from "../dtos/tokenResponse";
 
 export class userServices
 {
