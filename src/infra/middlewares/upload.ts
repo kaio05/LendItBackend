@@ -13,7 +13,9 @@ const storage = multer.diskStorage({
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const ms = Date.now() + '-' + Math.round(Math.random() * 1e4);
 
-        cb(null, `${day}-${month}-${ms}-${file.originalname}`);
+        const extension = path.extname(file.originalname);
+
+        cb(null, `${day}-${month}-${ms}-${extension}`);
     }
 });
 

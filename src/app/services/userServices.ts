@@ -2,8 +2,8 @@ import { User } from "../../domain/entities/user";
 import { Ihash } from "../../domain/Iutils/Ihash";
 import { Ijwt } from "../../domain/Iutils/Ijwt";
 import { IuserRepository } from "../../domain/Irepositories/IuserRepository";
-import { userDto } from "../DTOs/userDto";
-import { TokenResponse } from "../DTOs/tokenResponse";
+import { userDto } from "../dtos/userDto";
+import { TokenResponse } from "../dtos/tokenResponse";
 
 export class userServices
 {
@@ -61,7 +61,7 @@ export class userServices
 
         const newEmail = user.email? user.email : userExists.getEmail();
         const newName = user.username? user.username : userExists.getUsername();
-        const newPass = user.password? user.password : userExists.getPassword();
+        const newPass = user.password? await this.crypt.hashPass(user.password) : userExists.getPassword();
         const newPath = user.picturePath? user.picturePath: userExists.getPicturePath();
 
         await this.repository.update(new User(newEmail, newPass, newName, newPath, userExists.getId()));
