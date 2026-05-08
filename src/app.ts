@@ -15,6 +15,7 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
+app.use("/uploads", express.static("upload"));
 // Routes
 app.use("/api/user", userRoutes);
 app.use("/api/games", gameRoutes);

@@ -13,16 +13,68 @@ model User {
   password String
   username String
   picturePath String
+
   game Game[]
+  loaner Loan[] @relation("Loaner")
+  receiver Loan[] @relation("Receiver")
+  debtor Fine[] @relation("Debtor")
+  sender Message[] @relation("MsgSender")
+  mReceiver Message[] @relation("MsgReceiver")
 }
 
 model Game {
   id String @id @default(uuid())
+  userId String
   code String @unique
   name String
   category String
   description String
   available Boolean @db.Boolean
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String
+  
+  loan Loan[] @relation()
+}
+
+enum LoanStatus {
+  ANALYSIS
+  ACCEPTED
+  ONGOING
+  OVERDUE
+}
+
+model Loan {
+  id String @id @default(uuid())
+  loanerId String
+  recieverId String
+  gameId String
+  startDate DateTime
+  deadline DateTime
+  status LoanStatus @default(ANALYSIS)
+
+  loaner User @relation("Loaner", fields: [loanerId], references: [id])
+  receiver User @relation("Receiver", fields: [recieverId], references: [id])
+  game Game @relation(fields: [gameId], references: [id])
+
+  fineLoan Fine[]
+}
+
+model Fine {
+  id String @id @default(uuid())
+  debtorId String
+  loanId String
+  value Decimal @db.Decimal(7, 2)
+
+  debtor User @relation("Debtor", fields: [debtorId], references: [id])
+  loan Loan @relation(fields: [loanId], references: [id])
+}
+
+model Message {
+  id String @id
+  senderId String
+  receiverId String
+  content String
+
+  sender User @relation("MsgSender", fields: [senderId], references: [id], onDelete: Cascade)
+  reciever User @relation("MsgReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
 }

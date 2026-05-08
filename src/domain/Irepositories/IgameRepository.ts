@@ -1,5 +1,4 @@
-import { gameDTO } from "../../infra/data/dto/gameDTO";
-import { Game } from "../entities/game";
+import { gameDTO } from "../../app/DTOs/gameDTO";
 
 export interface IgameRepository
 {
