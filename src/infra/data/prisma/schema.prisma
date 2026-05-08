@@ -36,6 +36,13 @@ model Game {
   loan Loan[] @relation()
 }
 
+enum LoanStatus {
+  ANALYSIS
+  ACCEPTED
+  ONGOING
+  OVERDUE
+}
+
 model Loan {
   id String @id @default(uuid())
   loanerId String
@@ -43,7 +50,7 @@ model Loan {
   gameId String
   startDate DateTime
   deadline DateTime
-  isOverdue Boolean
+  status LoanStatus @default(ANALYSIS)
 
   loaner User @relation("Loaner", fields: [loanerId], references: [id])
   receiver User @relation("Receiver", fields: [recieverId], references: [id])

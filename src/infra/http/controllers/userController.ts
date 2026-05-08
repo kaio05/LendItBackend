@@ -57,7 +57,7 @@ export class userController
             return res.status(400).json({ message: "Invalid format." });
         }
         
-        const path = req.file?.path;
+        const path = req.file?.path.replace(/\\/g, "/");
         try {
             const token = req.headers['authorization']!.split(' ')[1];
 
