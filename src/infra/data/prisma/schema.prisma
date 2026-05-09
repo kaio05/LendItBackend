@@ -20,6 +20,9 @@ model User {
   debtor Fine[] @relation("Debtor")
   sender Message[] @relation("MsgSender")
   mReceiver Message[] @relation("MsgReceiver")
+  
+  chatsAsUser1  Chat[] @relation("User1Chats")
+  chatsAsUser2  Chat[] @relation("User2Chats")
 }
 
 model Game {
@@ -77,4 +80,16 @@ model Message {
 
   sender User @relation("MsgSender", fields: [senderId], references: [id], onDelete: Cascade)
   reciever User @relation("MsgReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+}
+
+model Chat {
+  id String @id @default(uuid())
+  
+  user1Id String
+  user2Id String
+
+  user1 User @relation("User1Chats", fields: [user1Id], references: [id])
+  user2 User @relation("User2Chats", fields: [user2Id], references: [id])
+
+  @@unique([user1Id, user2Id])
 }
