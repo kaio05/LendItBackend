@@ -46,14 +46,14 @@ enum LoanStatus {
 model Loan {
   id String @id @default(uuid())
   loanerId String
-  recieverId String
+  receiverId String
   gameId String
   startDate DateTime
   deadline DateTime
   status LoanStatus @default(ANALYSIS)
 
   loaner User @relation("Loaner", fields: [loanerId], references: [id])
-  receiver User @relation("Receiver", fields: [recieverId], references: [id])
+  receiver User @relation("Receiver", fields: [receiverId], references: [id])
   game Game @relation(fields: [gameId], references: [id])
 
   fineLoan Fine[]
@@ -76,5 +76,5 @@ model Message {
   content String
 
   sender User @relation("MsgSender", fields: [senderId], references: [id], onDelete: Cascade)
-  reciever User @relation("MsgReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+  receiver User @relation("MsgReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
 }

@@ -1,7 +1,7 @@
 import { IgameRepository } from "../../domain/Irepositories/IgameRepository";
 import { IuserRepository } from "../../domain/Irepositories/IuserRepository";
 import { Ijwt } from "../../domain/Iutils/Ijwt";
-import { gameDTO } from "../DTOs/gameDTO";
+import { gameDTO } from "../dtos/gameDTO";
 
 export class GameService
 {

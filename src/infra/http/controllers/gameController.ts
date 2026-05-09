@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { GameService } from "../../../app/services/gameService";
 import { GameRepository } from "../../../app/repositories/gameRepository";
-import { gameDTO } from "../../../app/DTOs/gameDTO";
+import { gameDTO } from "../../../app/dtos/gameDTO";
 import { jwtHelp } from "../../../app/utils/jwtHelp";
 import { userRepository } from "../../../app/repositories/userRepository";
 
