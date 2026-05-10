@@ -19,7 +19,6 @@ model User {
   receiver Loan[] @relation("Receiver")
   debtor Fine[] @relation("Debtor")
   sender Message[] @relation("MsgSender")
-  mReceiver Message[] @relation("MsgReceiver")
   
   chatsAsUser1  Chat[] @relation("User1Chats")
   chatsAsUser2  Chat[] @relation("User2Chats")
@@ -73,13 +72,13 @@ model Fine {
 }
 
 model Message {
-  id String @id
+  id String @id @default(uuid())
+  chatId String
   senderId String
-  receiverId String
-  content String
+  text String
 
   sender User @relation("MsgSender", fields: [senderId], references: [id], onDelete: Cascade)
-  reciever User @relation("MsgReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+  chat Chat @relation("ChatMessage", fields: [chatId], references: [id], onDelete: Cascade)
 }
 
 model Chat {
@@ -90,6 +89,7 @@ model Chat {
 
   user1 User @relation("User1Chats", fields: [user1Id], references: [id])
   user2 User @relation("User2Chats", fields: [user2Id], references: [id])
+  chat Message[] @relation("ChatMessage")
 
   @@unique([user1Id, user2Id])
 }

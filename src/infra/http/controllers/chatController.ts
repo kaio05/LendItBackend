@@ -31,8 +31,7 @@ export class ChatController {
             return res.status(200).json(response)
 
         } catch (error) {
-            console.log(error)
-            res.status(500).json(error)
+            next(error)
         }
     }
 
@@ -51,7 +50,7 @@ export class ChatController {
 
             res.status(200).json(chats)
         } catch (error) {
-            res.status(500).json(error)
+            next(error)
         }
     }
 
@@ -68,7 +67,7 @@ export class ChatController {
             res.status(200).json(chat)
         } catch(error) {
             console.log(error)
-            res.status(500).json(error)
+            next(error)
         }
     }
 }
