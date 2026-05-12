@@ -25,7 +25,14 @@ export class LoanRepository implements IloanRepository
             return null;
         }
 
-        return new Loan(loan.loanerId, loan.receiverId, loan.gameId, loan.startDate, loan.deadline, loan.id, loan.status as LoanStatus);
+        return new Loan(loan.loanerId, 
+            loan.receiverId, 
+            loan.gameId, 
+            loan.startDate, 
+            loan.deadline, 
+            loan.id, 
+            loan.status as LoanStatus
+        );
     }
 
     async findByUserId(id: string): Promise<Loan[] | []> {
@@ -36,22 +43,6 @@ export class LoanRepository implements IloanRepository
                     { receiverId: id }
                 ] 
             }
-        });
-
-        return loans.map(loan => new Loan(
-            loan.loanerId, 
-            loan.receiverId, 
-            loan.gameId, 
-            loan.startDate, 
-            loan.deadline, 
-            loan.id, 
-            loan.status as LoanStatus)
-        );
-    }
-
-    async findByStatus(status: LoanStatus): Promise<Loan[] | []> {
-        const loans = await prisma.loan.findMany({
-            where: { status: status }
         });
 
         return loans.map(loan => new Loan(
