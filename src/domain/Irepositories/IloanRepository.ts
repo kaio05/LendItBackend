@@ -7,6 +7,7 @@ export default interface IloanRepository
     findByUserId(id: string): Promise<Loan[] | []>;
     findOwnerIdByGameId(gameId: string): Promise<string | null>;
     userExists(id: string): Promise<boolean>;
-    update(loan: Loan): Promise<void>;
+    updateDate(loan: Loan): Promise<void>;
+    updateStatus(id:string, status: LoanStatus): Promise<void>;
     delete(id: string): Promise<void>;
 }

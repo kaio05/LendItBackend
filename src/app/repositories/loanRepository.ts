@@ -76,14 +76,20 @@ export class LoanRepository implements IloanRepository
         return exists? true : false;
     }
 
-    async update(loan: Loan): Promise<void> {
+    async updateDate(loan: Loan): Promise<void> {
         await prisma.loan.update({
             where: { id: loan.getId() },
             data: {
                 startDate: loan.getStartDate(),
-                deadline: loan.getDeadline(),
-                status: loan.getStatus()
+                deadline: loan.getDeadline()
             }
+        });
+    }
+
+    async updateStatus(id:string, status: LoanStatus): Promise<void> {
+        await prisma.loan.update({
+            where: { id: id },
+            data: { status: status}
         });
     }
 

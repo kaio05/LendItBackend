@@ -17,12 +17,9 @@ export class LoanService
         const receiverId = this.jwt.decodeAccessToken(token).id;
 
         const userExists = await this.repository.userExists(receiverId);
-        if (!userExists) {
-            throw new Error("Usuário não existe.");
-        }
+        if (!userExists) throw new Error("Usuário não existe.");
 
         const ownerId = await this.repository.findOwnerIdByGameId(loan.gameId!);
-
         if (!ownerId) throw new Error("Este jogo não possui um dono.");
 
         if (ownerId === receiverId) throw new Error("Você não pode emprestar seu próprio jogo.");
@@ -69,36 +66,58 @@ export class LoanService
         return loan;
     }
 
-    async update(token: string, loan: loanDTO): Promise<void> {
-        const id = this.jwt.decodeAccessToken(token).id;
+    async updateDate(token: string, loan: loanDTO): Promise<void> {
+        const userId = this.jwt.decodeAccessToken(token).id;
 
-        const userExists = await this.repository.userExists(id);
+        const userExists = await this.repository.userExists(userId);
         if (!userExists) throw new Error("Usuário não existe.");
 
         const oldLoan = await this.repository.findById(loan.id!);
-        if (!oldLoan) throw new Error("Empréstimo não encontrado.");
+        if (!oldLoan) throw new Error("Empréstimo não existe.");
 
-        if (oldLoan.getReceiverId() !== id || oldLoan.getLoanerId() !== id) {
-            throw new Error("Você não tem permissão para alterar este empréstimo.");
+        if (userId !== oldLoan.getReceiverId()) {
+            throw new Error("Você não pode alterar a data desse empréstimo.");
         }
 
         if (oldLoan.getStatus() !== LoanStatus.ANALYSIS) {
-            throw new Error("Este empréstimo já foi aceito e não pode ser alterado.");
+            throw  new Error("Este empréstimo já foi aceito e não pode ter sua data alterada.");
         }
 
-        const newStartDate = loan.startDate? loan.startDate : oldLoan.getStartDate();
+        const newStart = loan.startDate? loan.startDate : oldLoan.getStartDate();
         const newDeadline = loan.deadline? loan.deadline : oldLoan.getDeadline();
-        const newStatus = loan.status? loan.status : oldLoan.getStatus();
 
-        await this.repository.update(new Loan(
-            oldLoan.getLoanerId(), 
-            oldLoan.getReceiverId(), 
-            oldLoan.getGameId(), 
-            newStartDate, 
-            newDeadline, 
-            oldLoan.getId(), 
-            newStatus
+        await this.repository.updateDate(new Loan(
+            oldLoan.getLoanerId(),
+            oldLoan.getReceiverId(),
+            oldLoan.getGameId(),
+            newStart,
+            newDeadline,
+            oldLoan.getId(),
         ));
+    }
+
+    async updateStatus(token: string, loan: loanDTO): Promise<void> {
+        if (!loan.status) {
+            return;
+        }
+
+        const userId = this.jwt.decodeAccessToken(token).id;
+
+        const userExists = await this.repository.userExists(userId);
+        if (!userExists) throw new Error("Usuário não existe.");
+
+        const oldLoan = await this.repository.findById(loan.id!);
+        if (!oldLoan) throw new Error("Empréstimo não existe.");
+
+        if (userId !== oldLoan.getLoanerId()) {
+            throw new Error("Você não tem permissão para alterar esse empréstimo.")
+        }
+
+        if (loan.status !== LoanStatus.ACCEPTED && loan.status !== LoanStatus.ANALYSIS){
+            throw new Error("Você não pode alterar para esse status.");
+        }
+
+        await this.repository.updateStatus(oldLoan.getId(), loan.status);
     }
 
     async delete(token: string, id: string) {

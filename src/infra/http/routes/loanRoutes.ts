@@ -9,7 +9,8 @@ loanRoutes.use(verifyAccessToken);
 loanRoutes.post("/", controller.createLoan);
 loanRoutes.get("/:id", controller.getLoan);
 loanRoutes.get("/me", controller.getAllLoans);
-loanRoutes.put("/:id", controller.updateLoan);
+loanRoutes.put("/:id", controller.updateDate);
+loanRoutes.patch("/status/:id", controller.updateStatus);
 loanRoutes.delete("/:id", controller.delete);
 
 export default loanRoutes;

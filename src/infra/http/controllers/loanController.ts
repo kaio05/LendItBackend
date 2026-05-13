@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { createLoanSchema, updateLoanSchema } from "../../schemas/loanSchemas";
+import { createLoanSchema, updateLoanSchema, updateStatusSchema } from "../../schemas/loanSchemas";
 import { LoanService } from "../../../app/services/loanService";
 import { LoanRepository } from "../../../app/repositories/loanRepository";
 import { jwtHelp } from "../../../app/utils/jwtHelp";
@@ -71,16 +71,16 @@ export class loanController
         }
     }
 
-    updateLoan = async (req: Request<Params>, res: Response, next: NextFunction) => {
-        const loanId = req.params.id;
-        if (this.uuidRegex.test(loanId)) {
-            return res.status(400).json({
+    updateDate = async (req: Request<Params>, res: Response, next: NextFunction) => {
+        const loanId  = req.params.id;
+        if (!this.uuidRegex.test(loanId)) {
+            return res.status(400).json({ 
                 message: "Invalid identifier."
             });
         }
 
-        const loan = updateLoanSchema.safeParse(req.body);
-        if (!loan.success) {
+        const newDates = updateLoanSchema.safeParse(req.body);
+        if (!newDates.success) {
             return res.status(400).json({
                 message: "Invalid format."
             });
@@ -88,14 +88,38 @@ export class loanController
 
         try {
             const token = req.headers['authorization']!.split(' ')[1];
-            await this.service.update(token, {
-                id: loanId,
-                startDate: loan.data?.startDate,
-                deadline: loan.data?.deadline,
-                status: loan.data?.status
+            await this.service.updateDate(token, {
+                startDate: newDates.data.startDate,
+                deadline: newDates.data.deadline
             });
             return res.status(200);
 
+        } catch (error) {
+            next(error);
+        }
+
+    }
+
+    updateStatus = async (req: Request<Params>, res: Response, next: NextFunction) => {
+        const loanId  = req.params.id;
+        if (!this.uuidRegex.test(loanId)) {
+            return res.status(400).json({ 
+                message: "Invalid identifier."
+            });
+        }
+
+        const newStatus = updateStatusSchema.safeParse(req.body);
+        if (!newStatus.success) {
+            return res.status(400).json({
+                message: "Invalid format."
+            });
+        }
+
+        try {
+            const token = req.headers['authorization']!.split(' ')[1];
+            await this.service.updateStatus(token, {status: newStatus.data.status});
+            return res.status(200);
+            
         } catch (error) {
             next(error);
         }
