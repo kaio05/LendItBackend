@@ -44,6 +44,18 @@ export class userRepository implements IuserRepository
 
         return new User(user.email, user.password, user.username, user.picturePath, user.id);
     }
+
+    async findAll(): Promise<{
+        id: string,
+        email: string,
+        password: string,
+        username: string,
+        picturePath: string,
+    }[]| []> {
+        const users = await prisma.user.findMany();
+
+        return users;
+    }
     
     async findByEmail(email: string): Promise<User | null> {
         const user = await prisma.user.findUnique({ 

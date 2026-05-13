@@ -76,8 +76,9 @@ model Message {
   chatId String
   senderId String
   text String
+  createdAt DateTime @default(now())
 
-  sender User @relation("MsgSender", fields: [senderId], references: [id], onDelete: Cascade)
+  sender User @relation("MsgSender", fields: [senderId], references: [id], onDelete: Cascade) 
   chat Chat @relation("ChatMessage", fields: [chatId], references: [id], onDelete: Cascade)
 }
 

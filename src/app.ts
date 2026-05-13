@@ -22,7 +22,7 @@ app.use("/uploads", express.static("upload"));
 app.use("/api/user", userRoutes);
 app.use("/api/games", gameRoutes);
 app.use("/api/chat", chatRoute);
-app.use("/api/message", messageRoute);
+app.use("/api/messages", messageRoute);
 
 // Global error handler (should be after routes)
 app.use(errorHandler);
