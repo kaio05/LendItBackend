@@ -1,5 +1,5 @@
 import { IgameRepository } from "../../domain/Irepositories/IgameRepository";
-import { gameDTO } from "../DTOs/gameDTO";
+import { gameDTO } from "../dtos/gameDTO";
 import { prisma } from "../../infra/data/lib/prisma";
 
 export class GameRepository implements IgameRepository
