@@ -67,7 +67,7 @@ export class userServices
         await this.repository.update(new User(newEmail, newPass, newName, newPath, userExists.getId()));
     }
 
-    async find(token: string): Promise<User | null> {
+    async findToken(token: string): Promise<User | null> {
 
         const decoded = this.jwtHelp.decodeAccessToken(token);
         if (!decoded) {
@@ -80,6 +80,29 @@ export class userServices
         }
 
         return user;
+    }
+
+    async find(id: string): Promise<User | null> {
+
+        const user = await this.repository.findById(id);
+        if (!user) {
+            return null;
+        }
+
+        return user;
+    }
+
+    async findAll(): Promise<{
+        id: string,
+        email: string,
+        password: string,
+        username: string,
+        picturePath: string,
+    }[]| []> {
+
+        const users = await this.repository.findAll();
+
+        return users;
     }
 
     async login(email: string, password: string): Promise<TokenResponse> {

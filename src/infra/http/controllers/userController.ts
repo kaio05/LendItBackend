@@ -9,6 +9,9 @@ import { TokenResponse } from "../../../app/dtos/tokenResponse";
 import { NextFunction, Request, Response } from "express";
 import { createUserSchema, updateUserSchema, loginSchema } from "../../schemas/userSchema";
 
+interface SearchParams {
+    userId: string
+}
 export class userController
 {
     private service: userServices = new userServices(
@@ -75,13 +78,38 @@ export class userController
         }
     }
 
-    find = async (req: Request, res: Response, next: NextFunction) => {
+    findMe = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const token = req.headers['authorization']!.split(' ')[1];
 
-            const user = await this.service.find(token);
+            const user = await this.service.findToken(token);
 
             res.status(200).json({ data: user });
+        } 
+        catch (error) {
+            next(error);
+        }
+    }
+
+    findById = async (req: Request<SearchParams>, res: Response, next: NextFunction) => {
+        const userId = req.params.userId;
+        try {
+
+            const user = await this.service.find(userId);
+
+            res.status(200).json({ data: user });
+        } 
+        catch (error) {
+            next(error);
+        }
+    }
+
+    findAll = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+
+            const users = await this.service.findAll();
+
+            res.status(200).json({ data: users });
         } 
         catch (error) {
             next(error);
