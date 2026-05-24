@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { LoanStatus } from "../../domain/entities/loan";
+import { LoanStatus } from "@/domain/entities/loan";
 
 const tomorrow = new Date();
 tomorrow.setDate(tomorrow.getDate() + 1);
@@ -16,6 +16,6 @@ export const updateLoanSchema = z.object({
     deadline: z.date().min(tomorrow.getDate() + 2).optional(),
 });
 
-export const updateStatusSchema = z.object({
-    status: z.enum(LoanStatus).exclude(["ONGOING", "OVERDUE"])
+export const statusSchema = z.object({
+    status: z.enum(LoanStatus)
 });

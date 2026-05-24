@@ -21,7 +21,6 @@ export class userServices
     }
 
     async create(user: User): Promise<void> {
-
         const userExists = await this.repository.findByEmail(user.getEmail());
         if (userExists) {
             throw new Error("Email já cadastrado.");
