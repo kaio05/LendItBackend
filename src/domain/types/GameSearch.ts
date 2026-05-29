@@ -1,0 +1,1 @@
+export type GameSearch = { name: string | undefined, category: string | undefined, description: string | undefined }

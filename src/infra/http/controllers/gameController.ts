@@ -4,6 +4,7 @@ import { GameRepository } from "../../../app/repositories/gameRepository";
 import { gameDTO } from "../../../app/dtos/gameDTO";
 import { jwtHelp } from "../../../app/utils/jwtHelp";
 import { userRepository } from "../../../app/repositories/userRepository";
+import { GameSearch } from "../../../domain/types/GameSearch";
 
 export class GameController {
     private service: GameService = new GameService(
@@ -49,10 +50,21 @@ export class GameController {
         }
     }
 
-    getAll = async (req: Request, res: Response, next: NextFunction) => {
+    getMine = async (req: Request, res: Response, next: NextFunction) => {
         try {
+            console.log(req.params)
             const token = req.headers['authorization']!.split(' ')[1];
             const gameList = await this.service.getAll(token)
+            res.status(200).json({data: gameList})
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    search = async (req: Request<{}, {}, {}, GameSearch>, res: Response, next: NextFunction) => {
+        try {
+            const filters = req.query;
+            const gameList = await this.service.find(filters)
             res.status(200).json({data: gameList})
         } catch (error) {
             next(error)
