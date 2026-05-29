@@ -1,6 +1,7 @@
 import { IgameRepository } from "../../domain/Irepositories/IgameRepository";
 import { IuserRepository } from "../../domain/Irepositories/IuserRepository";
 import { Ijwt } from "../../domain/Iutils/Ijwt";
+import { GameSearch } from "../../domain/types/GameSearch";
 import { gameDTO } from "../dtos/gameDTO";
 
 export class GameService
@@ -75,5 +76,9 @@ export class GameService
     async getAll(token: string): Promise<gameDTO[] | []> {
         const decoded = this.jwtHelp.decodeAccessToken(token);
         return await this.repository.getAll(decoded.id);
+    }
+
+    async find(params: GameSearch): Promise<gameDTO[] | []> {
+        return await this.repository.find(params);
     }
 }

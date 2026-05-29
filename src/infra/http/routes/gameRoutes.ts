@@ -7,7 +7,8 @@ const controller: GameController = new GameController();
 
 gameRoute.use(verifyAccessToken);
 gameRoute.post("/", controller.create);
-gameRoute.get("/", controller.getAll);
+gameRoute.get("/myGames", controller.getMine);
+gameRoute.get("/", controller.search);
 gameRoute.patch("/", controller.update);
 gameRoute.delete("/", controller.delete);
 

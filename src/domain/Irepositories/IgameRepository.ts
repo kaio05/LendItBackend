@@ -1,4 +1,5 @@
 import { gameDTO } from "../../app/dtos/gameDTO";
+import { GameSearch } from "../types/GameSearch";
 
 export interface IgameRepository
 {
@@ -7,4 +8,5 @@ export interface IgameRepository
     update(game: gameDTO): Promise<gameDTO | null>;
     delete(game: gameDTO): Promise<void>
     getAll(id: string): Promise<gameDTO[] | []>;
+    find(params: GameSearch): Promise<gameDTO[] | []>;
 }
