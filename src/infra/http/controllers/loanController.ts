@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import { createLoanSchema, updateLoanSchema, updateStatusSchema } from "../../schemas/loanSchemas";
-import { LoanService } from "../../../app/services/loanService";
-import { LoanRepository } from "../../../app/repositories/loanRepository";
-import { jwtHelp } from "../../../app/utils/jwtHelp";
+import { createLoanSchema, updateLoanSchema, statusSchema } from "../../schemas/loanSchemas";
+import { LoanService } from "@/app/services/loanService";
+import LoanRepository from "@/app/repositories/loanRepository";
+import { jwtHelp } from "@/app/utils/jwtHelp";
 
 type Params = {
     id: string;
@@ -15,8 +15,8 @@ export class loanController
         new LoanRepository(),
         new jwtHelp()
     );
-    
-    createLoan = async (req: Request, res: Response, next: NextFunction) => {
+
+    create = async (req: Request, res: Response, next: NextFunction) => {
         const loan = createLoanSchema.safeParse(req.body);
         if (!loan.success) {
             return res.status(400).json({ 
@@ -31,14 +31,14 @@ export class loanController
                 startDate: loan.data.startDate,
                 deadline: loan.data.deadline
             });
-            return res.status(201);
+            return res.status(201).json({ message: "Loan created." });
 
         } catch(error) {
             next(error);
         }
     }
 
-    getAllLoans = async (req: Request, res: Response, next: NextFunction) => {
+    getAll = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const token = req.headers['authorization']!.split(' ')[1];
             const loans = await this.service.getAll(token);
@@ -51,7 +51,7 @@ export class loanController
         }
     }
 
-    getLoan = async (req: Request<Params>, res: Response, next: NextFunction) => {
+    getUnique = async (req: Request<Params>, res: Response, next: NextFunction) => {
         const loanId  = req.params.id;
         if (!this.uuidRegex.test(loanId)) {
             return res.status(400).json({ 
@@ -61,13 +61,33 @@ export class loanController
 
         try {
             const token = req.headers['authorization']!.split(' ')[1];
-            const loan = this.service.getUnique(token, loanId);
+            const loan = await this.service.getUnique(token, loanId);
             return res.status(200).json({
                 data: loan
             });
 
         } catch (error) {
             next(error);
+        }
+    }
+
+    getByStatus = async (req: Request, res: Response, next: NextFunction) => {
+        const status = statusSchema.safeParse(req.body);
+        if (!status.success) {
+            return res.status(400).json({ 
+                message: "Invalid status."
+            });
+        }
+
+        try {
+            const token = req.headers['authorization']!.split(' ')[1];
+            const loans = await this.service.getByStatus(token, status.data.status);
+            return res.status(200).json({
+                data: loans
+            });
+
+        } catch (error) {
+            next(error)
         }
     }
 
@@ -79,7 +99,7 @@ export class loanController
             });
         }
 
-        const newDates = updateLoanSchema.safeParse(req.body);
+        const newDates = updateLoanSchema. safeParse(req.body);
         if (!newDates.success) {
             return res.status(400).json({
                 message: "Invalid format."
@@ -92,7 +112,7 @@ export class loanController
                 startDate: newDates.data.startDate,
                 deadline: newDates.data.deadline
             });
-            return res.status(200);
+            return res.status(200).json({ message: "Loan updated." });
 
         } catch (error) {
             next(error);
@@ -100,7 +120,7 @@ export class loanController
 
     }
 
-    updateStatus = async (req: Request<Params>, res: Response, next: NextFunction) => {
+    accept = async (req: Request<Params>, res: Response, next: NextFunction) => {
         const loanId  = req.params.id;
         if (!this.uuidRegex.test(loanId)) {
             return res.status(400).json({ 
@@ -108,17 +128,82 @@ export class loanController
             });
         }
 
-        const newStatus = updateStatusSchema.safeParse(req.body);
-        if (!newStatus.success) {
-            return res.status(400).json({
-                message: "Invalid format."
+        try {
+            const token = req.headers['authorization']!.split(' ')[1];
+            await this.service.accept(token, loanId);
+            return res.status(200).json({ message: "Loan Accepted."  });
+            
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    cancel = async (req: Request<Params>, res: Response, next: NextFunction) => {
+        const loanId  = req.params.id;
+        if (!this.uuidRegex.test(loanId)) {
+            return res.status(400).json({ 
+                message: "Invalid identifier."
             });
         }
 
         try {
             const token = req.headers['authorization']!.split(' ')[1];
-            await this.service.updateStatus(token, {status: newStatus.data.status});
-            return res.status(200);
+            await this.service.cancel(token, loanId);
+            return res.status(200).json({ message: "The loan was canceled." });
+            
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    startReturn = async (req: Request<Params>, res: Response, next: NextFunction) => {
+        const loanId  = req.params.id;
+        if (!this.uuidRegex.test(loanId)) {
+            return res.status(400).json({ 
+                message: "Invalid identifier."
+            });
+        }
+
+        try {
+            const token = req.headers['authorization']!.split(' ')[1];
+            await this.service.return(token, loanId);
+            return res.status(200).json({ message: "The return process was iniciated." });
+            
+        } catch (error) {
+            next(error);
+        }
+    } 
+
+    confirmOverdue = async (req: Request<Params>, res: Response, next: NextFunction) => {
+        const loanId  = req.params.id;
+        if (!this.uuidRegex.test(loanId)) {
+            return res.status(400).json({ 
+                message: "Invalid identifier."
+            });
+        }
+
+        try {
+            const token = req.headers['authorization']!.split(' ')[1];
+            await this.service.confirmOverdue(token, loanId);
+            return res.status(200).json({ message: "The loan is overdue." });
+            
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    confirmReturn = async (req: Request<Params>, res: Response, next: NextFunction) => {
+        const loanId  = req.params.id;
+        if (!this.uuidRegex.test(loanId)) {
+            return res.status(400).json({ 
+                message: "Invalid identifier."
+            });
+        }
+
+        try {
+            const token = req.headers['authorization']!.split(' ')[1];
+            await this.service.confirmReturn(token, loanId);
+            return res.status(200).json({ message: "The loan was returned." });
             
         } catch (error) {
             next(error);
@@ -136,7 +221,7 @@ export class loanController
         try {
             const token = req.headers['authorization']!.split(' ')[1];
             await this.service.delete(token, loanId);
-            return res.status(200);
+            return res.status(200).json({ messsage: "Loan deleted."});
 
         } catch (error) {
             next(error);

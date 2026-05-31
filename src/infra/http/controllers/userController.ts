@@ -5,6 +5,7 @@ import { userServices } from "../../../app/services/userServices";
 import { jwtHelp } from "../../../app/utils/jwtHelp";
 import { bcryptHash } from "../../../app/utils/bcryptHash";
 import { TokenResponse } from "../../../app/dtos/tokenResponse";
+import FileStorage from "../../../app/utils/FileStorage";
 
 import { NextFunction, Request, Response } from "express";
 import { createUserSchema, updateUserSchema, loginSchema } from "../../schemas/userSchema";
@@ -12,12 +13,14 @@ import { createUserSchema, updateUserSchema, loginSchema } from "../../schemas/u
 interface SearchParams {
     userId: string
 }
+
 export class userController
 {
     private service: userServices = new userServices(
         new userRepository(), 
         new bcryptHash(), 
-        new jwtHelp()
+        new jwtHelp(),
+        new FileStorage
     );
 
     create = async (req: Request, res: Response, next: NextFunction) => {

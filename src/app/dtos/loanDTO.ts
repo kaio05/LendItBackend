@@ -1,4 +1,4 @@
-import { loanStatus } from "../../domain/entities/loan";
+import { LoanStatus } from "@/domain/entities/loan";
 
 export type loanDTO = {
     id?: string;
@@ -7,5 +7,5 @@ export type loanDTO = {
     gameId?: string;
     startDate?: Date;
     deadline?: Date;
-    status?: loanStatus;
+    status?: LoanStatus;
 }
