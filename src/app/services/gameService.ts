@@ -78,6 +78,10 @@ export class GameService
         return await this.repository.getAll(decoded.id);
     }
 
+    async getByCode(code: string): Promise<gameDTO | null> {
+        return await this.repository.getByCode(code);
+    }
+
     async find(params: GameSearch): Promise<gameDTO[] | []> {
         return await this.repository.find(params);
     }
