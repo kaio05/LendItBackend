@@ -51,6 +51,14 @@ export class GameRepository implements IgameRepository
         })
     }
 
+    async getByCode(code: string): Promise<gameDTO | null> {
+        return await prisma.game.findUnique({
+            where: {
+                code: code
+            }
+        })
+    }
+
     async find(filters: GameSearch): Promise<gameDTO[] | []> {
         const { name, category } = filters
         return await prisma.game.findMany({

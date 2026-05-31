@@ -38,11 +38,11 @@ export class GameController {
         }
     }
 
-    delete = async (req: Request, res: Response, next: NextFunction) => {
+    delete = async (req: Request<{gameCode: string}>, res: Response, next: NextFunction) => {
         try {
             const token = req.headers['authorization']!.split(' ')[1];
-            const body = req.body
-            const toDelete: gameDTO = body
+            const gameCode = req.params.gameCode;
+            const toDelete: gameDTO = {code: gameCode}
             const updated = await this.service.delete(token, toDelete)
             res.status(204).json({message: "deleted"})
         } catch (error) {
@@ -56,6 +56,17 @@ export class GameController {
             const token = req.headers['authorization']!.split(' ')[1];
             const gameList = await this.service.getAll(token)
             res.status(200).json({data: gameList})
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    getByCode = async (req: Request<{gameCode: string}>, res: Response, next: NextFunction) => {
+        try {
+            console.log(req.params)
+            const gameCode = req.params.gameCode;
+            const game = await this.service.getByCode(gameCode)
+            res.status(200).json({data: game})
         } catch (error) {
             next(error)
         }
