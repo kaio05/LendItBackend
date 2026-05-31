@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "cucumber-js",
     "dev": "nodemon --watch src/**/*.ts --exec tsx src/infra/server.ts"
   },
   "repository": {
@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/kaio05/LendItBackend#readme",
   "devDependencies": {
+    "@cucumber/cucumber": "^12.9.0",
     "@types/bcrypt": "^6.0.0",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
