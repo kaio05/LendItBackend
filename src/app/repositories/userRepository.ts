@@ -1,6 +1,6 @@
-import { User } from "../../domain/entities/user";
-import { IuserRepository } from "../../domain/Irepositories/IuserRepository";
-import { prisma } from "../../infra/data/lib/prisma";
+import { User } from "@/domain/entities/user";
+import { IuserRepository } from "@/domain/Irepositories/IuserRepository";
+import { prisma } from "@/infra/data/lib/prisma";
 
 export class userRepository implements IuserRepository
 {

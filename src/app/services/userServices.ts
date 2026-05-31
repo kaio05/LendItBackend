@@ -1,8 +1,8 @@
-import { User } from "../../domain/entities/user";
-import { Ihash } from "../../domain/Iutils/Ihash";
-import { Ijwt } from "../../domain/Iutils/Ijwt";
-import IFileStorage from "../../domain/Iutils/IFileStorage";
-import { IuserRepository } from "../../domain/Irepositories/IuserRepository";
+import { User } from "@/domain/entities/user";
+import { Ihash } from "@/domain/Iutils/Ihash";
+import { Ijwt } from "@/domain/Iutils/Ijwt";
+import IFileStorage from "@/domain/Iutils/IFileStorage";
+import { IuserRepository } from "@/domain/Irepositories/IuserRepository";
 import { userDto } from "../dtos/userDto";
 import { TokenResponse } from "../dtos/tokenResponse";
 

@@ -123,6 +123,18 @@ export default class LoanRepository implements IloanRepository
         return game.userId;
     }
 
+    async findUserEmailById(id: string): Promise<string | null> {
+        const user = await prisma.user.findUnique({
+            where: { id }
+        });
+
+        if (!user) {
+            return null;
+        }
+
+        return user.email;
+    }
+
     async userExists(id: string): Promise<boolean> {
         const user = await prisma.user.findUnique({
             where: { id }
