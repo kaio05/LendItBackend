@@ -174,10 +174,6 @@ export class LoanService
         await this.repository.updateStatus(id, LoanStatus.ANALYSIS);
     }
 
-    async start(id: string): Promise<void> {
-        await this.repository.updateStatus(id, LoanStatus.ONGOING);
-    }
-
     async return(token: string, id: string): Promise<void> {
         const { userId, loan } = await this.validateUserAndLoan(token, id);
 
