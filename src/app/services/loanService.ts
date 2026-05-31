@@ -70,8 +70,11 @@ export class LoanService
             return null;
         }
 
-        if (userId !== loan.getLoanerId() || userId !== loan.getReceiverId()) {
-            throw new Error("Você não tem acesso ao emprestimo.")
+        const receiverId = loan.getReceiverId();
+        const loanerId = loan.getLoanerId();
+
+        if (!(userId !== receiverId || userId !== loanerId)) {
+            throw new Error("Você não tem acesso ao emprestimo.");
         }
 
         return loan;
@@ -145,11 +148,14 @@ export class LoanService
     async cancel(token: string, id: string): Promise<void> {
         const { userId, loan } = await this.validateUserAndLoan(token, id);
 
-        if (loan.getLoanerId() !== userId || loan.getReceiverId() !== userId) {
+        const receiverId = loan.getReceiverId();
+        const loanerId = loan.getLoanerId();
+
+        if (!(userId !== receiverId || userId !== loanerId)) {
             throw new Error("Você não tem permissão para cancelar este empréstimo.");
         }
 
-        if (loan.getStatus() !== LoanStatus.ANALYSIS || loan.getStatus() !== LoanStatus.ACCEPTED) {
+        if (!(loan.getStatus() !== LoanStatus.ANALYSIS || loan.getStatus() !== LoanStatus.ACCEPTED)) {
             throw new Error("Esse empréstimo não pode ser cancelado.");
         }
 
@@ -181,7 +187,7 @@ export class LoanService
             throw new Error("Você não tem permissão para confirmar o atraso.");
         }
 
-        if (loan.getStatus() !== LoanStatus.RETURN_PENDING || loan.getStatus() !== LoanStatus.ONGOING) {
+        if (!(loan.getStatus() !== LoanStatus.RETURN_PENDING || loan.getStatus() !== LoanStatus.ONGOING)) {
             throw new Error("Você não pode confirmar o atraso");
         }
 
@@ -202,7 +208,7 @@ export class LoanService
             throw new Error("Você não tem permissão para confirmar a devolução do jogo.");
         }
 
-        if (loan.getStatus() !== LoanStatus.RETURN_PENDING || loan.getStatus() !== LoanStatus.OVERDUE) {
+        if (!(loan.getStatus() !== LoanStatus.RETURN_PENDING || loan.getStatus() !== LoanStatus.OVERDUE)) {
             throw new Error("Você não pode confirmar a devolução ainda.");
         }
 
@@ -212,7 +218,7 @@ export class LoanService
     async delete(token: string, id: string) {
         const { userId, loan } = await this.validateUserAndLoan(token, id);
 
-        if (userId !== loan.getLoanerId() || userId !== loan.getReceiverId()) {
+        if (!(userId !== loan.getLoanerId() || userId !== loan.getReceiverId())) {
             throw new Error("Você não tem permissão para deletar esse empréstimo.");
         }
 

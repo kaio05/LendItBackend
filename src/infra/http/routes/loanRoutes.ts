@@ -9,16 +9,16 @@ loanRoutes.use(verifyAccessToken);
 
 loanRoutes.post("/", controller.create);
 
-loanRoutes.get("/:id", controller.getUnique);
+loanRoutes.get("/unique/:id", controller.getUnique);
 loanRoutes.get("/me", controller.getAll);
 loanRoutes.get("/status", controller.getByStatus);
 
 loanRoutes.patch("/:id", controller.updateDate);
-loanRoutes.put("/accept/:id", controller.accept);
-loanRoutes.put("/cancel/:id", controller.cancel);
-loanRoutes.put("/startReturn/:id", controller.startReturn);
-loanRoutes.put("/confirmOverdue/:id", controller.confirmOverdue);
-loanRoutes.put("/confirmReturn/:id", controller.confirmReturn);
+loanRoutes.patch("/accept/:id", controller.accept);
+loanRoutes.patch("/cancel/:id", controller.cancel);
+loanRoutes.patch("/startReturn/:id", controller.startReturn);
+loanRoutes.patch("/confirmOverdue/:id", controller.confirmOverdue);
+loanRoutes.patch("/confirmReturn/:id", controller.confirmReturn);
 
 loanRoutes.delete("/:id", controller.delete);
 

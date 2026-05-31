@@ -31,7 +31,7 @@ export class loanController
                 startDate: loan.data.startDate,
                 deadline: loan.data.deadline
             });
-            return res.status(201);
+            return res.status(201).json({ message: "Loan created." });
 
         } catch(error) {
             next(error);
@@ -61,7 +61,7 @@ export class loanController
 
         try {
             const token = req.headers['authorization']!.split(' ')[1];
-            const loan = this.service.getUnique(token, loanId);
+            const loan = await this.service.getUnique(token, loanId);
             return res.status(200).json({
                 data: loan
             });
@@ -112,7 +112,7 @@ export class loanController
                 startDate: newDates.data.startDate,
                 deadline: newDates.data.deadline
             });
-            return res.status(200);
+            return res.status(200).json({ message: "Loan updated." });
 
         } catch (error) {
             next(error);
@@ -131,7 +131,7 @@ export class loanController
         try {
             const token = req.headers['authorization']!.split(' ')[1];
             await this.service.accept(token, loanId);
-            return res.status(200);
+            return res.status(200).json({ message: "Loan Accepted."  });
             
         } catch (error) {
             next(error);
@@ -149,7 +149,7 @@ export class loanController
         try {
             const token = req.headers['authorization']!.split(' ')[1];
             await this.service.cancel(token, loanId);
-            return res.status(200);
+            return res.status(200).json({ message: "The loan was canceled." });
             
         } catch (error) {
             next(error);
@@ -167,7 +167,7 @@ export class loanController
         try {
             const token = req.headers['authorization']!.split(' ')[1];
             await this.service.return(token, loanId);
-            return res.status(200);
+            return res.status(200).json({ message: "The return process was iniciated." });
             
         } catch (error) {
             next(error);
@@ -185,7 +185,7 @@ export class loanController
         try {
             const token = req.headers['authorization']!.split(' ')[1];
             await this.service.confirmOverdue(token, loanId);
-            return res.status(200);
+            return res.status(200).json({ message: "The loan is overdue." });
             
         } catch (error) {
             next(error);
@@ -203,7 +203,7 @@ export class loanController
         try {
             const token = req.headers['authorization']!.split(' ')[1];
             await this.service.confirmReturn(token, loanId);
-            return res.status(200);
+            return res.status(200).json({ message: "The loan was returned." });
             
         } catch (error) {
             next(error);
@@ -221,7 +221,7 @@ export class loanController
         try {
             const token = req.headers['authorization']!.split(' ')[1];
             await this.service.delete(token, loanId);
-            return res.status(200);
+            return res.status(200).json({ messsage: "Loan deleted."});
 
         } catch (error) {
             next(error);

@@ -24,7 +24,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/games", gameRoutes);
 app.use("/api/chat", chatRoute);
 app.use("/api/messages", messageRoute);
-app.use("/api/loan", loanRoutes)
+app.use("/api/loan", loanRoutes);
 
 // Global error handler (should be after routes)
 app.use(errorHandler);
