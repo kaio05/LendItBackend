@@ -52,12 +52,11 @@ export class GameRepository implements IgameRepository
     }
 
     async find(filters: GameSearch): Promise<gameDTO[] | []> {
-        const { name, category, description } = filters
+        const { name, category } = filters
         return await prisma.game.findMany({
             where: {
-                name: name !== undefined ? { contains: name, mode: 'insensitive' } : undefined,
+                name: name !== undefined ? { startsWith: name, mode: 'insensitive' } : undefined,
                 category: category,
-                description: description !== undefined ? { contains: description, mode: 'insensitive' } : undefined,
                 available: true
             }
         })
