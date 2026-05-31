@@ -3,6 +3,7 @@ import { createLoanSchema, updateLoanSchema, statusSchema } from "../../schemas/
 import { LoanService } from "@/app/services/loanService";
 import LoanRepository from "@/app/repositories/loanRepository";
 import { jwtHelp } from "@/app/utils/jwtHelp";
+import MailService from "@/app/utils/EmailExchange";
 
 type Params = {
     id: string;
@@ -13,6 +14,7 @@ export class loanController
     private uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
     private service: LoanService = new LoanService(
         new LoanRepository(),
+        new MailService(),
         new jwtHelp()
     );
 

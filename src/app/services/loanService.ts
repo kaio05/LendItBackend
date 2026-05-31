@@ -1,15 +1,18 @@
 import { Loan, LoanStatus } from "@/domain/entities/loan";
 import IloanRepository from "@/domain/Irepositories/IloanRepository";
+import { IEmail } from "@/domain/Iutils/IEmail";
 import { Ijwt } from "@/domain/Iutils/Ijwt";
 import { loanDTO } from "../dtos/loanDTO";
 
 export class LoanService
 {
     private repository: IloanRepository;
+    private mail: IEmail;
     private jwt: Ijwt;
 
-    constructor(repository: IloanRepository, jwt: Ijwt) {
+    constructor(repository: IloanRepository, mail: IEmail, jwt: Ijwt) {
         this.repository = repository;
+        this.mail = mail;
         this.jwt = jwt;
     }
 
@@ -46,6 +49,15 @@ export class LoanService
             loan.startDate!,
             loan.deadline!
         ));
+
+        const loanerEmail = await this.repository.findUserEmailById(loanerId);
+        if (loanerEmail) {
+            await this.mail.sendMail({
+                to: loanerEmail,
+                subject: "New Loan.",
+                text: "You received a new loan."
+            });
+        }
     }
 
     async getAll(token: string): Promise<Loan[] | []> {

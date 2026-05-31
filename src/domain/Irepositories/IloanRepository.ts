@@ -12,5 +12,6 @@ export default interface IloanRepository
     delete(id: string): Promise<void>;
 
     findOwnerByGameId(id: string): Promise<string | null>;
+    findUserEmailById(id: string): Promise<string | null>;
     userExists(id: string): Promise<boolean>;
 }

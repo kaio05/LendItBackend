@@ -1,6 +1,6 @@
 import fs from "fs/promises";
 import path from "path";
-import IFileStorage from "../../domain/Iutils/IFileStorage";
+import IFileStorage from "@/domain/Iutils/IFileStorage";
 
 export default class FileStorage implements IFileStorage
 {

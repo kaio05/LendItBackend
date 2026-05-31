@@ -1,4 +1,4 @@
-import { Ihash } from "../../domain/Iutils/Ihash";
+import { Ihash } from "@/domain/Iutils/Ihash";
 import { hash, genSalt, compare } from "bcrypt";
 
 export class bcryptHash implements Ihash
