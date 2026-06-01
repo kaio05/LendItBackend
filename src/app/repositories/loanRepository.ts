@@ -148,4 +148,19 @@ export default class LoanRepository implements IloanRepository
 
         return user? true : false;
     }
+
+    async createFine(debtorId: string, loanId: string, value: number): Promise<void> {
+        await prisma.fine.create({
+            data: {
+                debtorId,
+                loanId,
+                value
+            }
+        });
+
+        await prisma.user.update({
+            where: { id: debtorId },
+            data: { isSuspended: true }
+        });
+    }
 }

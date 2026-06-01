@@ -9,6 +9,7 @@ export class LoanService
     private repository: IloanRepository;
     private mail: IEmail;
     private jwt: Ijwt;
+    private value = 5000;
 
     constructor(repository: IloanRepository, mail: IEmail, jwt: Ijwt) {
         this.repository = repository;
@@ -18,7 +19,6 @@ export class LoanService
 
     async create(token: string, loan: loanDTO) {
         const receiverId = this.jwt.decodeAccessToken(token).id;
-
 
         const receiver = await this.repository.findUserById(receiverId);
         if (!receiver) {
@@ -233,6 +233,7 @@ export class LoanService
         }
 
         await this.repository.updateStatus(id, LoanStatus.OVERDUE);
+        await this.repository.createFine(loan.getReceiverId(), loan.getId(), this.value);
     }
 
     async confirmReturn(token: string, id: string): Promise<void> {

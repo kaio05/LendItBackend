@@ -15,4 +15,6 @@ export default interface IloanRepository
     findOwnerByGameId(id: string): Promise<string | null>;
     findUserById(id: string): Promise<User | null>;
     userExists(id: string): Promise<boolean>;
+    
+    createFine(debtorId: string, loanId: string, value: number): Promise<void>;
 }
