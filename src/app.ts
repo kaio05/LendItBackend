@@ -7,6 +7,7 @@ import gameRoutes from './infra/http/routes/gameRoutes';
 import chatRoute from "./infra/http/routes/chatRoutes";
 import messageRoute from "./infra/http/routes/messageRoutes";
 import loanRoutes from "./infra/http/routes/loanRoutes";
+import fineRoute from "./infra/http/routes/fineRoutes";
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use("/api/games", gameRoutes);
 app.use("/api/chat", chatRoute);
 app.use("/api/messages", messageRoute);
 app.use("/api/loan", loanRoutes);
+app.use("/api/fine", fineRoute);
 
 // Global error handler (should be after routes)
 app.use(errorHandler);

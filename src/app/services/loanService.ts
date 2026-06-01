@@ -70,7 +70,6 @@ export class LoanService
         const userId = this.jwt.decodeAccessToken(token).id;
         
         const userExists = this.repository.userExists(userId);
-
         if (!userExists) throw new Error("Usuário não existe.");
 
         return await this.repository.findByUserId(userId);
