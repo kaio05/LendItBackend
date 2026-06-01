@@ -3,8 +3,9 @@ import config from './config/config';
 import { Server } from 'socket.io';
 import { createServer } from 'node:http';
 import { schedule } from "node-cron";
-import StartLoans from './works/StartLoans';
 import createDirs from './config/createDir';
+import StartLoans from './works/StartLoans';
+import StartReturnLoans from './works/StartReturnLoans';
 
 const server = createServer(app);
 
@@ -52,7 +53,8 @@ io.on('connection', (socket) => {
 createDirs();
 
 if (process.env.CRON_WORK === "true") {
-  schedule("0 10 * * *", StartLoans);     // Every day at 10am
+  schedule("0 10 * * *", StartLoans);         // Every day at 10am
+  schedule("0 10 * * *", StartReturnLoans);
 }
 
 server.listen(config.port, () => {
