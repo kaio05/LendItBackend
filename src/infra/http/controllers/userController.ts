@@ -1,14 +1,12 @@
-import { User } from "../../../domain/entities/user";
-
-import { userRepository } from "../../../app/repositories/userRepository";
-import { userServices } from "../../../app/services/userServices";
-import { jwtHelp } from "../../../app/utils/jwtHelp";
-import { bcryptHash } from "../../../app/utils/bcryptHash";
-import { TokenResponse } from "../../../app/dtos/tokenResponse";
-import FileStorage from "../../../app/utils/FileStorage";
-
-import { NextFunction, Request, Response } from "express";
+import { User } from "@/domain/entities/user";
+import { userRepository } from "@/app/repositories/userRepository";
+import { userServices } from "@/app/services/userServices";
+import { jwtHelp } from "@/app/utils/jwtHelp";
+import { bcryptHash } from "@/app/utils/bcryptHash";
+import { TokenResponse } from "@/app/dtos/tokenResponse";
+import FileStorage from "@/app/utils/FileStorage";
 import { createUserSchema, updateUserSchema, loginSchema } from "../../schemas/userSchema";
+import { NextFunction, Request, Response } from "express";
 
 interface SearchParams {
     userId: string

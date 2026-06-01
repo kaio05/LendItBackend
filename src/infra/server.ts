@@ -2,6 +2,9 @@ import app from '../app';
 import config from './config/config';
 import { Server } from 'socket.io';
 import { createServer } from 'node:http';
+import { schedule } from "node-cron";
+import StartLoans from './works/StartLoans';
+import createDirs from './config/createDir';
 
 const server = createServer(app);
 
@@ -45,6 +48,12 @@ io.on('connection', (socket) => {
     io.emit("getOnlineUsers", onlineUsers)
   })
 });
+
+createDirs();
+
+if (process.env.CRON_WORK === "true") {
+  schedule("0 10 * * *", StartLoans);     // Every day at 10am
+}
 
 server.listen(config.port, () => {
   console.log(`Server running on port ${config.port}`);

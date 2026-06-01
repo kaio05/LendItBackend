@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { jwtHelp } from "../../app/utils/jwtHelp";
+import { jwtHelp } from "@/app/utils/jwtHelp";
 
 export const verifyAccessToken = async (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers['authorization'];

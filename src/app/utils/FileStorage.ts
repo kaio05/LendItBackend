@@ -1,6 +1,7 @@
-import fs from "fs/promises";
-import path from "path";
 import IFileStorage from "@/domain/Iutils/IFileStorage";
+import fs from "fs";
+import fsp from "fs/promises";
+import path from "path";
 
 export default class FileStorage implements IFileStorage
 {
@@ -9,10 +10,13 @@ export default class FileStorage implements IFileStorage
     async delete(filename: string): Promise<void> {
         const filePath = path.join(this.basePath, filename);
 
+        if (!fs.existsSync(filePath)) {
+            return;
+        }
+
         try {
-            console.log(filePath)
-            await fs.stat(filePath);
-            await fs.unlink(filePath);
+            await fsp.stat(filePath);
+            await fsp.unlink(filePath);
 
         } catch (error: any) {
             if (error.code !== "ENOENT") {

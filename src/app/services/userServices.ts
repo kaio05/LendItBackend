@@ -32,20 +32,7 @@ export class userServices
         await this.repository.save(user);
     }
 
-    async delete(token: string): Promise<void> {
-
-        const decoded = this.jwtHelp.decodeAccessToken(token);
-        
-        const userExists = await this.repository.findById(decoded.id);
-        if (!userExists) {
-            throw new Error("Erro interno.");
-        }
-        await this.fs.delete(userExists.getPicturePath());
-        await this.repository.delete(userExists);
-    }
-
     async update(token: string, user: userDto): Promise<void> {
-
         const decoded = this.jwtHelp.decodeAccessToken(token);
 
         const userExists = await this.repository.findById(decoded.id);
@@ -64,17 +51,24 @@ export class userServices
         const newEmail = user.email? user.email : userExists.getEmail();
         const newName = user.username? user.username : userExists.getUsername();
         const newPass = user.password? await this.crypt.hashPass(user.password) : userExists.getPassword();
+        const newPath = user.picturePath? user.picturePath : userExists.getPicturePath();
 
-        let newPath = undefined;
-        if (user.picturePath) {
-            await this.fs.delete(userExists.getPicturePath());
-            newPath = user.picturePath;
-        } 
-        else {
-            newPath = userExists.getPicturePath()
+        if (userExists.getPicturePath()) {
+           await this.fs.delete(userExists.getPicturePath());
         }
 
         await this.repository.update(new User(newEmail, newPass, newName, newPath, userExists.getId()));
+    }
+
+    async delete(token: string): Promise<void> {
+        const decoded = this.jwtHelp.decodeAccessToken(token);
+        
+        const userExists = await this.repository.findById(decoded.id);
+        if (!userExists) {
+            throw new Error("Erro interno.");
+        }
+        await this.fs.delete(userExists.getPicturePath());
+        await this.repository.delete(userExists);
     }
 
     async findToken(token: string): Promise<User | null> {
