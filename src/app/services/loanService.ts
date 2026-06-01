@@ -176,7 +176,28 @@ export class LoanService
             throw new Error("Esse empréstimo não pode ser cancelado.");
         }
 
-        await this.repository.updateStatus(id, LoanStatus.ANALYSIS);
+        if (loan.getStatus() === LoanStatus.ACCEPTED){
+            await this.repository.updateStatus(id, LoanStatus.ANALYSIS);
+        } else {
+            await this.repository.delete(id);
+        }
+    }
+
+    async start(token: string, id: string): Promise<void> {
+        const { userId, loan } = await this.validateUserAndLoan(token, id);
+
+        const receiverId = loan.getReceiverId();
+        const loanerId = loan.getLoanerId();
+
+        if (!(userId !== receiverId || userId !== loanerId)) {
+            throw new Error("Você tem permissão para iniciar o empréstimo.");
+        }
+
+        if (loan.getStatus() !== LoanStatus.ACCEPTED) {
+            throw new Error("O empréstimo não pode ser iniciado.");
+        }
+
+        await this.repository.updateStatus(id, LoanStatus.ONGOING);
     }
 
     async return(token: string, id: string): Promise<void> {
@@ -200,7 +221,7 @@ export class LoanService
             throw new Error("Você não tem permissão para confirmar o atraso.");
         }
 
-        if (!(loan.getStatus() !== LoanStatus.RETURN_PENDING || loan.getStatus() !== LoanStatus.ONGOING)) {
+        if (!(loan.getStatus() !== LoanStatus.RETURN_PENDING)) {
             throw new Error("Você não pode confirmar o atraso");
         }
 

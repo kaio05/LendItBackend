@@ -16,6 +16,7 @@ loanRoutes.get("/status", controller.getByStatus);
 loanRoutes.patch("/:id", controller.updateDate);
 loanRoutes.patch("/accept/:id", controller.accept);
 loanRoutes.patch("/cancel/:id", controller.cancel);
+loanRoutes.patch("/start/:id", controller.start);
 loanRoutes.patch("/startReturn/:id", controller.startReturn);
 loanRoutes.patch("/confirmOverdue/:id", controller.confirmOverdue);
 loanRoutes.patch("/confirmReturn/:id", controller.confirmReturn);

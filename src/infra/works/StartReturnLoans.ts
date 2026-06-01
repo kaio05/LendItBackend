@@ -7,30 +7,31 @@ export default async function StartReturnLoans()
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    await prisma.loan.updateMany({
-        where: {
-            status: LoanStatus.ONGOING,
-            deadline: { lt: today }
-        },
-        data: {
-            status: LoanStatus.RETURN_PENDING
-        }
-    });
+    const mail = new MailService();
 
     const loans = await prisma.loan.findMany({
         where: {
-            status: LoanStatus.RETURN_PENDING,
+            status: LoanStatus.ONGOING,
             deadline: { lt: today }
         }
     });
 
-    const mail = new MailService();
+    loans.forEach(async (loan) => {
+        await prisma.loan.update({
+            where: { id: loan.id },
+            data: { status: LoanStatus.RETURN_PENDING }
+        });
 
-    loans.forEach(loan => {
-        mail.sendMail({
+        await mail.sendMail({
             to: loan.loanerId,
             subject: "Devolução de empréstimo.",
             text: `Você pode confirmar a devolução do empréstimo de id:${loan.id}.`
-        })
+        });
+
+        await mail.sendMail({
+            to: loan.receiverId,
+            subject: "Devolução iniciada.",
+            text: `O seu empréstimo de id:${loan.id} está marcado como retorno pendente. Agradecemos por usar LendIt!`
+        });
     });
 }

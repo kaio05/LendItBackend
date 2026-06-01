@@ -158,6 +158,24 @@ export class loanController
         }
     }
 
+    start = async (req: Request<Params>, res: Response, next: NextFunction) => {
+        const loanId  = req.params.id;
+        if (!this.uuidRegex.test(loanId)) {
+            return res.status(400).json({ 
+                message: "Invalid identifier."
+            });
+        }
+
+        try {
+            const token = req.headers['authorization']!.split(' ')[1];
+            await this.service.start(token, loanId);
+            return res.status(200).json({ message: "The loan was iniciated." });
+            
+        } catch (error) {
+            next(error);
+        }
+    }
+
     startReturn = async (req: Request<Params>, res: Response, next: NextFunction) => {
         const loanId  = req.params.id;
         if (!this.uuidRegex.test(loanId)) {
@@ -223,7 +241,7 @@ export class loanController
         try {
             const token = req.headers['authorization']!.split(' ')[1];
             await this.service.delete(token, loanId);
-            return res.status(200).json({ messsage: "Loan deleted."});
+            return res.status(204).json({ messsage: "Loan deleted."});
 
         } catch (error) {
             next(error);
