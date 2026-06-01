@@ -1,25 +1,5 @@
 import assert from 'assert';
 import { Given, When, Then } from '@cucumber/cucumber';
-// import { userServices } from "../../src/app/services/userServices";
-// import { jwtHelp } from "../../src/app/utils/jwtHelp";
-// import { userRepository } from "../../src/app/repositories/userRepository";
-// import { bcryptHash } from "../../src/app/utils/bcryptHash";
-
-// async function login(email, password) {
-//   const service = new userServices(
-//     new userRepository(), 
-//     new bcryptHash(), 
-//     new jwtHelp()
-//   );
-//   try {
-//     let tokens = {'accessToken':'', 'refreshToken':''};
-//     tokens = await service.login(email, password);
-//     return "Logged in!";
-//   } catch (error) {
-//     return "Invalid credentials";
-//   }
-  
-// }
 
 function canLogIn(email, password) {
   if (email === "user1@email.com" && password === "12345")
