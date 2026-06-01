@@ -2,7 +2,9 @@ export enum LoanStatus {
     ANALYSIS = "ANALYSIS", 
     ACCEPTED = "ACCEPTED", 
     ONGOING = "ONGOING", 
-    OVERDUE = "OVERDUE"
+    RETURN_PENDING = "RETURN_PENDING",
+    OVERDUE = "OVERDUE",
+    FINALIZED = "FINALIZED"
 }
 
 export class Loan 
@@ -15,7 +17,7 @@ export class Loan
     private Deadline: Date;
     private Status: LoanStatus;
 
-    constructor(loanerId: string, receiverId: string, gameId: string, startDate: Date, deadline: Date, id: string = "", status: LoanStatus = LoanStatus.ANALYSIS) {
+    constructor(loanerId: string, receiverId: string, gameId: string, startDate: Date, deadline: Date, status: LoanStatus = LoanStatus.ANALYSIS, id: string = "") {
         this.Id = id;
         this.LoanerId = loanerId;
         this.ReceiverId = receiverId;

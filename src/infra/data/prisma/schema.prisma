@@ -42,7 +42,9 @@ enum LoanStatus {
   ANALYSIS
   ACCEPTED
   ONGOING
+  RETURN_PENDING
   OVERDUE
+  FINALIZED
 }
 
 model Loan {

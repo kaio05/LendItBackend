@@ -1,4 +1,4 @@
-import { JWTVerifyResponse } from "../../app/utils/jwtHelp";
+import { JWTVerifyResponse } from "@/app/utils/jwtHelp";
 
 export type payload = {
     id: string

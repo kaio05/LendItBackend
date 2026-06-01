@@ -4,7 +4,7 @@ import { verifyAccessToken } from "../../middlewares/verifyJWT";
 import { upload } from "../../middlewares/upload";
 
 const userRoute = Router();
-const controller: userController = new userController()
+const controller: userController = new userController();
 
 userRoute.post("/", controller.create);
 userRoute.post("/login", controller.login);

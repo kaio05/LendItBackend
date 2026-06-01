@@ -1,4 +1,4 @@
-import { Ijwt, payload } from "../../domain/Iutils/Ijwt";
+import { Ijwt, payload } from "@/domain/Iutils/Ijwt";
 import jwt from "jsonwebtoken";
 
 export type JWTVerifyResponse = {

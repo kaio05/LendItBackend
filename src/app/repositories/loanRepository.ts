@@ -1,8 +1,8 @@
-import { Loan, LoanStatus } from "../../domain/entities/loan";
-import IloanRepository from "../../domain/Irepositories/IloanRepository";
-import { prisma } from "../../infra/data/lib/prisma";
+import { Loan, LoanStatus } from "@/domain/entities/loan";
+import IloanRepository from "@/domain/Irepositories/IloanRepository";
+import { prisma } from "@/infra/data/lib/prisma";
 
-export class LoanRepository implements IloanRepository
+export default class LoanRepository implements IloanRepository
 {
     async save(loan: Loan): Promise<void> {
         await prisma.loan.create({
@@ -18,84 +18,128 @@ export class LoanRepository implements IloanRepository
 
     async findById(id: string): Promise<Loan | null> {
         const loan = await prisma.loan.findUnique({
-            where: { id: id }
+            where: { id }
         });
 
-        if (!loan) {
-            return null;
-        }
+        if (!loan) return null;
 
-        return new Loan(loan.loanerId, 
-            loan.receiverId, 
-            loan.gameId, 
-            loan.startDate, 
-            loan.deadline, 
-            loan.id, 
-            loan.status as LoanStatus
+        return new Loan(
+            loan.loanerId,
+            loan.receiverId,
+            loan.gameId,
+            loan.startDate,
+            loan.deadline,
+            loan.status as LoanStatus,
+            loan.id
         );
     }
 
-    async findByUserId(id: string): Promise<Loan[] | []> {
+    async findByUserId(id: string): Promise<Loan[]> {
         const loans = await prisma.loan.findMany({
             where: {
                 OR: [
                     { loanerId: id },
                     { receiverId: id }
-                ] 
+                ]
             }
         });
 
         return loans.map(loan => new Loan(
-            loan.loanerId, 
-            loan.receiverId, 
-            loan.gameId, 
-            loan.startDate, 
-            loan.deadline, 
-            loan.id, 
-            loan.status as LoanStatus)
-        );
+            loan.loanerId,
+            loan.receiverId,
+            loan.gameId,
+            loan.startDate,
+            loan.deadline,
+            loan.status as LoanStatus,
+            loan.id
+        ));
     }
 
-    async findOwnerIdByGameId(gameId: string): Promise<string | null> {
-        const owner = await prisma.game.findUnique({
-            where: { id: gameId },
+    async findByGameId(id: string): Promise<Loan[]> {
+        const loans = await prisma.loan.findMany({
+            where: { gameId: id }
         });
 
-        if (!owner) {
-            return null;
-        }
-
-        return owner.userId;
+        return loans.map(loan => new Loan(
+            loan.loanerId,
+            loan.receiverId,
+            loan.gameId,
+            loan.startDate,
+            loan.deadline,
+            loan.status as LoanStatus,
+            loan.id
+        ));
     }
 
-    async userExists(id: string): Promise<boolean> {
-        const exists = await prisma.user.findUnique({
-            where: { id: id }
+    async findByStatus(id:string, status: LoanStatus): Promise<Loan[]> {
+        const loans = await prisma.loan.findMany({
+            where: { 
+                OR: [ { loanerId : id }, { receiverId: id } ],
+                status: status
+            }
         });
 
-        return exists? true : false;
+        return loans.map(loan => new Loan(
+            loan.loanerId,
+            loan.receiverId,
+            loan.gameId,
+            loan.startDate,
+            loan.deadline,
+            loan.status as LoanStatus,
+            loan.id
+        ));
     }
 
-    async updateDate(loan: Loan): Promise<void> {
+    async updateDate(id: string, start: Date, deadline: Date): Promise<void> {
         await prisma.loan.update({
-            where: { id: loan.getId() },
+            where: { id },
             data: {
-                startDate: loan.getStartDate(),
-                deadline: loan.getDeadline()
+                startDate: start,
+                deadline: deadline
             }
         });
     }
 
-    async updateStatus(id:string, status: LoanStatus): Promise<void> {
+    async updateStatus(id: string, status: LoanStatus): Promise<void> {
         await prisma.loan.update({
-            where: { id: id },
-            data: { status: status}
+            where: { id },
+            data: { status: status }
         });
     }
 
     async delete(id: string): Promise<void> {
         await prisma.loan.delete({
-            where: { id: id }
+            where: { id }
         });
+    }
+
+    async findOwnerByGameId(id: string): Promise<string | null> {
+        const game = await prisma.game.findUnique({
+            where: { id }
+        });
+
+        if (!game) return null;
+
+        return game.userId;
+    }
+
+    async findUserEmailById(id: string): Promise<string | null> {
+        const user = await prisma.user.findUnique({
+            where: { id }
+        });
+
+        if (!user) {
+            return null;
+        }
+
+        return user.email;
+    }
+
+    async userExists(id: string): Promise<boolean> {
+        const user = await prisma.user.findUnique({
+            where: { id }
+        });
+
+        return user? true : false;
     }
 }

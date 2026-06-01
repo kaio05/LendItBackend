@@ -1,7 +1,7 @@
-import { IgameRepository } from "../../domain/Irepositories/IgameRepository";
+import { IgameRepository } from "@/domain/Irepositories/IgameRepository";
+import { GameSearch } from "@/domain/types/GameSearch";
 import { gameDTO } from "../dtos/gameDTO";
-import { prisma } from "../../infra/data/lib/prisma";
-import { GameSearch } from "../../domain/types/GameSearch";
+import { prisma } from "@/infra/data/lib/prisma";
 
 export class GameRepository implements IgameRepository
 {
@@ -47,6 +47,14 @@ export class GameRepository implements IgameRepository
         return await prisma.game.findMany({
             where: {
                 userId: id
+            }
+        })
+    }
+
+    async getByCode(code: string): Promise<gameDTO | null> {
+        return await prisma.game.findUnique({
+            where: {
+                code: code
             }
         })
     }

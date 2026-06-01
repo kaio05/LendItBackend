@@ -1,7 +1,8 @@
-import { User } from "../../domain/entities/user";
-import { Ihash } from "../../domain/Iutils/Ihash";
-import { Ijwt } from "../../domain/Iutils/Ijwt";
-import { IuserRepository } from "../../domain/Irepositories/IuserRepository";
+import { User } from "@/domain/entities/user";
+import { Ihash } from "@/domain/Iutils/Ihash";
+import { Ijwt } from "@/domain/Iutils/Ijwt";
+import IFileStorage from "@/domain/Iutils/IFileStorage";
+import { IuserRepository } from "@/domain/Irepositories/IuserRepository";
 import { userDto } from "../dtos/userDto";
 import { TokenResponse } from "../dtos/tokenResponse";
 
@@ -10,15 +11,16 @@ export class userServices
     private repository: IuserRepository;
     private crypt: Ihash;
     private jwtHelp: Ijwt;
+    private fs: IFileStorage;
 
-    constructor(userRep: IuserRepository, crypt: Ihash, jwtHelp: Ijwt) {
+    constructor(userRep: IuserRepository, crypt: Ihash, jwtHelp: Ijwt, fs: IFileStorage) {
         this.repository = userRep;
         this.crypt = crypt;
         this.jwtHelp = jwtHelp;
+        this.fs = fs;
     }
 
     async create(user: User): Promise<void> {
-
         const userExists = await this.repository.findByEmail(user.getEmail());
         if (userExists) {
             throw new Error("Email já cadastrado.");
@@ -38,7 +40,7 @@ export class userServices
         if (!userExists) {
             throw new Error("Erro interno.");
         }
-
+        await this.fs.delete(userExists.getPicturePath());
         await this.repository.delete(userExists);
     }
 
@@ -62,7 +64,15 @@ export class userServices
         const newEmail = user.email? user.email : userExists.getEmail();
         const newName = user.username? user.username : userExists.getUsername();
         const newPass = user.password? await this.crypt.hashPass(user.password) : userExists.getPassword();
-        const newPath = user.picturePath? user.picturePath: userExists.getPicturePath();
+
+        let newPath = undefined;
+        if (user.picturePath) {
+            await this.fs.delete(userExists.getPicturePath());
+            newPath = user.picturePath;
+        } 
+        else {
+            newPath = userExists.getPicturePath()
+        }
 
         await this.repository.update(new User(newEmail, newPass, newName, newPath, userExists.getId()));
     }
