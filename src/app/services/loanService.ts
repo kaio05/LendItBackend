@@ -19,8 +19,14 @@ export class LoanService
     async create(token: string, loan: loanDTO) {
         const receiverId = this.jwt.decodeAccessToken(token).id;
 
-        if (! await this.repository.userExists(receiverId)) {
+
+        const receiver = await this.repository.findUserById(receiverId);
+        if (!receiver) {
             throw new Error("Usuário não encontrado.");
+        }
+
+        if (receiver.getIsSuspended()) {
+            throw new Error("Usuário está suspenso.");
         }
 
         if (!loan.gameId) throw new Error("Identificador do jogo não encontrado.");
@@ -50,10 +56,10 @@ export class LoanService
             loan.deadline!
         ));
 
-        const loanerEmail = await this.repository.findUserEmailById(loanerId);
+        const loanerEmail = await this.repository.findUserById(loanerId);
         if (loanerEmail) {
             await this.mail.sendMail({
-                to: loanerEmail,
+                to: loanerEmail.getEmail(),
                 subject: "New Loan.",
                 text: "You received a new loan."
             });

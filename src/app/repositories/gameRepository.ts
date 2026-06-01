@@ -13,7 +13,7 @@ export class GameRepository implements IgameRepository
                 name: game.name!,
                 category: game.category!,
                 description: game.description!,
-                available: true,
+                imagePath: game.imagePath!
             }
         })
 

@@ -13,6 +13,7 @@ model User {
   password String
   username String
   picturePath String
+  isSuspended Boolean @default(false)
 
   game Game[]
   loaner Loan[] @relation("Loaner")
@@ -31,7 +32,7 @@ model Game {
   name String
   category String
   description String
-  available Boolean @db.Boolean
+  imagePath String
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   

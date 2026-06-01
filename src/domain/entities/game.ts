@@ -6,16 +6,16 @@ export class Game
     private Name: string;
     private Description: string;
     private Category: string;
-    private Available: boolean;
+    private imagePath: string;
 
-    constructor(userId: string, code: string, name: string, category: string, description: string, available: boolean = true, id: string = "") {
+    constructor(userId: string, code: string, name: string, category: string, description: string, imagepath: string = "", id: string = "") {
         this.Id = id;
         this.UserId = userId;
         this.Code = code;
         this.Name = name;
         this.Category = category;
         this.Description = description;
-        this.Available = available;
+        this.imagePath = imagepath;
     }
 
     getId() { return this.Id; }
@@ -30,5 +30,5 @@ export class Game
 
     getDescription() { return this.Description; }
 
-    getAvailable() { return this.Available; }
+    getImagePath() { return this.imagePath; }
 }
