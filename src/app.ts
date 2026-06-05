@@ -19,7 +19,6 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
-app.use("/uploads", express.static("uploads"));
 app.use("/uploads/game_images", express.static("uploads/game_images"));
 app.use("/uploads/user_images", express.static("uploads/user_images"));
 

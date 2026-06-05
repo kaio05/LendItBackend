@@ -1,4 +1,6 @@
 export default interface IFileStorage 
 {
-    delete(filename: string): Promise<void>;
+    join(firstPath: string, secondPath: string): string;
+    changeDir(filename: string, dirPath: string): void;
+    delete(filename: string): void;
 }
