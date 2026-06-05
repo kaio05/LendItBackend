@@ -4,6 +4,6 @@ export type gameDTO = {
     name?: string
     category?: string
     description?: string
-    available?: boolean
+    imagePath?: string
     userId?: string
 }

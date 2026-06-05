@@ -51,7 +51,7 @@ export class GameService
             name: game.name || found.name,
             category: game.category || found.category,
             description: game.description || found.description,
-            available: game.available || found.available
+            imagePath: game.imagePath || found.imagePath
         }
 
         const updated: gameDTO | null = await this.repository.update(toUpdate);

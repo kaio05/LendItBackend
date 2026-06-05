@@ -57,7 +57,14 @@ export class userServices
            await this.fs.delete(userExists.getPicturePath());
         }
 
-        await this.repository.update(new User(newEmail, newPass, newName, newPath, userExists.getId()));
+        await this.repository.update(new User(
+            newEmail, 
+            newPass, 
+            newName, 
+            newPath, 
+            userExists.getIsSuspended(), 
+            userExists.getId()
+        ));
     }
 
     async delete(token: string): Promise<void> {

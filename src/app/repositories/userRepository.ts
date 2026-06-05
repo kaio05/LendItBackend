@@ -42,7 +42,14 @@ export class userRepository implements IuserRepository
             return null;
         }
 
-        return new User(user.email, user.password, user.username, user.picturePath, user.id);
+        return new User(
+            user.email, 
+            user.password, 
+            user.username,
+            user.picturePath,
+            user.isSuspended,
+            user.id
+        );
     }
 
     async findAll(): Promise<{
@@ -66,6 +73,13 @@ export class userRepository implements IuserRepository
             return null;
         }
 
-        return new User(user.email, user.password, user.username, user.picturePath, user.id);
+        return new User(
+            user.email, 
+            user.password, 
+            user.username, 
+            user.picturePath, 
+            user.isSuspended,
+            user.id
+        );
     }
 }

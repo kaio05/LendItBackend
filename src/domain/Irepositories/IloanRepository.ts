@@ -1,4 +1,5 @@
 import { Loan, LoanStatus } from "../entities/loan";
+import { User } from "../entities/user";
 
 export default interface IloanRepository
 {
@@ -12,6 +13,8 @@ export default interface IloanRepository
     delete(id: string): Promise<void>;
 
     findOwnerByGameId(id: string): Promise<string | null>;
-    findUserEmailById(id: string): Promise<string | null>;
+    findUserById(id: string): Promise<User | null>;
     userExists(id: string): Promise<boolean>;
+    
+    createFine(debtorId: string, loanId: string, value: number): Promise<void>;
 }

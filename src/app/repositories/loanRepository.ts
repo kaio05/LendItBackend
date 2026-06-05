@@ -1,4 +1,5 @@
 import { Loan, LoanStatus } from "@/domain/entities/loan";
+import { User } from "@/domain/entities/user";
 import IloanRepository from "@/domain/Irepositories/IloanRepository";
 import { prisma } from "@/infra/data/lib/prisma";
 
@@ -123,16 +124,21 @@ export default class LoanRepository implements IloanRepository
         return game.userId;
     }
 
-    async findUserEmailById(id: string): Promise<string | null> {
+    async findUserById(id: string): Promise<User | null> {
         const user = await prisma.user.findUnique({
             where: { id }
         });
 
-        if (!user) {
-            return null;
-        }
+        if (!user) return null;
 
-        return user.email;
+        return new User(
+            user.email,
+            user.password,
+            user.username,
+            user.picturePath,
+            user.isSuspended,
+            user.id
+        );
     }
 
     async userExists(id: string): Promise<boolean> {
@@ -141,5 +147,20 @@ export default class LoanRepository implements IloanRepository
         });
 
         return user? true : false;
+    }
+
+    async createFine(debtorId: string, loanId: string, value: number): Promise<void> {
+        await prisma.fine.create({
+            data: {
+                debtorId,
+                loanId,
+                value
+            }
+        });
+
+        await prisma.user.update({
+            where: { id: debtorId },
+            data: { isSuspended: true }
+        });
     }
 }

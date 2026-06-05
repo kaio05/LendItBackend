@@ -9,6 +9,7 @@ export class LoanService
     private repository: IloanRepository;
     private mail: IEmail;
     private jwt: Ijwt;
+    private value = 5000;
 
     constructor(repository: IloanRepository, mail: IEmail, jwt: Ijwt) {
         this.repository = repository;
@@ -19,8 +20,13 @@ export class LoanService
     async create(token: string, loan: loanDTO) {
         const receiverId = this.jwt.decodeAccessToken(token).id;
 
-        if (! await this.repository.userExists(receiverId)) {
+        const receiver = await this.repository.findUserById(receiverId);
+        if (!receiver) {
             throw new Error("Usuário não encontrado.");
+        }
+
+        if (receiver.getIsSuspended()) {
+            throw new Error("Usuário está suspenso.");
         }
 
         if (!loan.gameId) throw new Error("Identificador do jogo não encontrado.");
@@ -50,10 +56,10 @@ export class LoanService
             loan.deadline!
         ));
 
-        const loanerEmail = await this.repository.findUserEmailById(loanerId);
+        const loanerEmail = await this.repository.findUserById(loanerId);
         if (loanerEmail) {
             await this.mail.sendMail({
-                to: loanerEmail,
+                to: loanerEmail.getEmail(),
                 subject: "New Loan.",
                 text: "You received a new loan."
             });
@@ -64,7 +70,6 @@ export class LoanService
         const userId = this.jwt.decodeAccessToken(token).id;
         
         const userExists = this.repository.userExists(userId);
-
         if (!userExists) throw new Error("Usuário não existe.");
 
         return await this.repository.findByUserId(userId);
@@ -171,7 +176,28 @@ export class LoanService
             throw new Error("Esse empréstimo não pode ser cancelado.");
         }
 
-        await this.repository.updateStatus(id, LoanStatus.ANALYSIS);
+        if (loan.getStatus() === LoanStatus.ACCEPTED){
+            await this.repository.updateStatus(id, LoanStatus.ANALYSIS);
+        } else {
+            await this.repository.delete(id);
+        }
+    }
+
+    async start(token: string, id: string): Promise<void> {
+        const { userId, loan } = await this.validateUserAndLoan(token, id);
+
+        const receiverId = loan.getReceiverId();
+        const loanerId = loan.getLoanerId();
+
+        if (!(userId !== receiverId || userId !== loanerId)) {
+            throw new Error("Você tem permissão para iniciar o empréstimo.");
+        }
+
+        if (loan.getStatus() !== LoanStatus.ACCEPTED) {
+            throw new Error("O empréstimo não pode ser iniciado.");
+        }
+
+        await this.repository.updateStatus(id, LoanStatus.ONGOING);
     }
 
     async return(token: string, id: string): Promise<void> {
@@ -195,7 +221,7 @@ export class LoanService
             throw new Error("Você não tem permissão para confirmar o atraso.");
         }
 
-        if (!(loan.getStatus() !== LoanStatus.RETURN_PENDING || loan.getStatus() !== LoanStatus.ONGOING)) {
+        if (!(loan.getStatus() !== LoanStatus.RETURN_PENDING)) {
             throw new Error("Você não pode confirmar o atraso");
         }
 
@@ -207,6 +233,7 @@ export class LoanService
         }
 
         await this.repository.updateStatus(id, LoanStatus.OVERDUE);
+        await this.repository.createFine(loan.getReceiverId(), loan.getId(), this.value);
     }
 
     async confirmReturn(token: string, id: string): Promise<void> {
