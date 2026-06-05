@@ -1,5 +1,6 @@
 import { IgameRepository } from "@/domain/Irepositories/IgameRepository";
 import { IuserRepository } from "@/domain/Irepositories/IuserRepository";
+import IFileStorage from "@/domain/Iutils/IFileStorage";
 import { Ijwt } from "@/domain/Iutils/Ijwt";
 import { GameSearch } from "@/domain/types/GameSearch";
 import { gameDTO } from "../dtos/gameDTO";
@@ -9,11 +10,14 @@ export class GameService
     private repository: IgameRepository;
     private userRepository: IuserRepository;
     private jwtHelp: Ijwt;
+    private fs: IFileStorage;
+    private imagesDir: string = "uploads/game_images";
 
-    constructor(gameRep: IgameRepository, userRep: IuserRepository, jwtHelp: Ijwt) {
+    constructor(gameRep: IgameRepository, userRep: IuserRepository, jwtHelp: Ijwt, fs: IFileStorage) {
         this.repository = gameRep;
         this.userRepository = userRep;
         this.jwtHelp = jwtHelp;
+        this.fs = fs;
     }
 
     async create(token: string, game: gameDTO): Promise<gameDTO> {
@@ -42,7 +46,16 @@ export class GameService
 
         const decoded = this.jwtHelp.decodeAccessToken(token);
 
-        if (found.userId != decoded.id) throw new Error("Usuário incorreto")
+        if (found.userId != decoded.id) throw new Error("Usuário incorreto");
+
+        let newImagePath = found.imagePath;
+        if (game.imagePath) {
+            newImagePath = game.imagePath;
+            this.fs.changeDir(game.imagePath, this.imagesDir);
+        }
+        if (found.imagePath) {
+            this.fs.delete(found.imagePath);
+        }
 
         const toUpdate: gameDTO = {
             id: found.id,
@@ -51,7 +64,7 @@ export class GameService
             name: game.name || found.name,
             category: game.category || found.category,
             description: game.description || found.description,
-            imagePath: game.imagePath || found.imagePath
+            imagePath: newImagePath
         }
 
         const updated: gameDTO | null = await this.repository.update(toUpdate);

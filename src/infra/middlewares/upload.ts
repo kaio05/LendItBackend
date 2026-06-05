@@ -5,7 +5,7 @@ const acceptedExt = [".png", ".jpg", ".jpeg"];
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, "uploads/");
+        cb(null, "");
     },
     filename: (req, file, cb) => {
         const date = new Date();

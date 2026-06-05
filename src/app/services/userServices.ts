@@ -12,6 +12,7 @@ export class userServices
     private crypt: Ihash;
     private jwtHelp: Ijwt;
     private fs: IFileStorage;
+    private imagesDir: string = "uploads/user_images";
 
     constructor(userRep: IuserRepository, crypt: Ihash, jwtHelp: Ijwt, fs: IFileStorage) {
         this.repository = userRep;
@@ -51,17 +52,22 @@ export class userServices
         const newEmail = user.email? user.email : userExists.getEmail();
         const newName = user.username? user.username : userExists.getUsername();
         const newPass = user.password? await this.crypt.hashPass(user.password) : userExists.getPassword();
-        const newPath = user.picturePath? user.picturePath : userExists.getPicturePath();
+
+        let newImagePath = userExists.getPicturePath();
+        if (user.picturePath) {
+            newImagePath = this.fs.join(this.imagesDir, user.picturePath);
+            this.fs.changeDir(user.picturePath, this.imagesDir);
+        }
 
         if (userExists.getPicturePath()) {
-           await this.fs.delete(userExists.getPicturePath());
+            this.fs.delete(userExists.getPicturePath());
         }
 
         await this.repository.update(new User(
             newEmail, 
             newPass, 
             newName, 
-            newPath, 
+            newImagePath, 
             userExists.getIsSuspended(), 
             userExists.getId()
         ));
@@ -74,7 +80,7 @@ export class userServices
         if (!userExists) {
             throw new Error("Erro interno.");
         }
-        await this.fs.delete(userExists.getPicturePath());
+        this.fs.delete(userExists.getPicturePath());
         await this.repository.delete(userExists);
     }
 
