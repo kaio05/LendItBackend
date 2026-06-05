@@ -4,13 +4,15 @@ import { GameRepository } from "@/app/repositories/gameRepository";
 import { gameDTO } from "@/app/dtos/gameDTO";
 import { jwtHelp } from "@/app/utils/jwtHelp";
 import { userRepository } from "@/app/repositories/userRepository";
+import FileStorage from "@/app/utils/FileStorage";
 import { GameSearch } from "@/domain/types/GameSearch";
 
 export class GameController {
     private service: GameService = new GameService(
         new GameRepository(),
         new userRepository(), 
-        new jwtHelp()
+        new jwtHelp(),
+        new FileStorage()
     )
 
     create = async (req: Request, res: Response, next: NextFunction) => {
@@ -19,7 +21,7 @@ export class GameController {
             const body = req.body
             const newGame: gameDTO = {...body}
             newGame.userId
-            const created = await this.service.create(token, newGame)
+            await this.service.create(token, newGame)
             res.status(201).json({message: "created"})
         } catch (error) {
             next(error)
@@ -29,12 +31,13 @@ export class GameController {
     update = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const token = req.headers['authorization']!.split(' ')[1];
-            const body = req.body
-            const toUpdate: gameDTO = {...body}
-            const updated = await this.service.update(token, toUpdate)
-            res.status(204).json({message: "updated"})
+            const body = req.body;
+            const imagePath = req.file?.path.replace(/\\/g, "/");
+            const toUpdate: gameDTO = {...body, imagePath};
+            await this.service.update(token, toUpdate);
+            res.status(204).json({message: "updated"});
         } catch (error) {
-            next(error)
+            next(error);
         }
     }
 
@@ -43,7 +46,7 @@ export class GameController {
             const token = req.headers['authorization']!.split(' ')[1];
             const gameCode = req.params.code;
             const toDelete: gameDTO = {code: gameCode}
-            const updated = await this.service.delete(token, toDelete)
+            await this.service.delete(token, toDelete)
             res.status(204).json({message: "deleted"})
         } catch (error) {
             next(error)
