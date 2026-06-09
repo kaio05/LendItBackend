@@ -33,6 +33,7 @@ export class GameService
         if (found) throw new Error("Jogo já cadastrado");
 
         game.userId = decoded.id;
+        game.imagePath = "";
         const saved: gameDTO = await this.repository.save(game);
 
         return saved;

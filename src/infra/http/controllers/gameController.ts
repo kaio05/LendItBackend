@@ -18,13 +18,13 @@ export class GameController {
     create = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const token = req.headers['authorization']!.split(' ')[1];
-            const body = req.body
-            const newGame: gameDTO = {...body}
-            newGame.userId
-            await this.service.create(token, newGame)
+            const body = req.body;
+            const newGame: gameDTO = {...body};
+            newGame.userId;
+            await this.service.create(token, newGame);
             res.status(201).json({message: "created"})
         } catch (error) {
-            next(error)
+            next(error);
         }
     }
 
@@ -45,33 +45,31 @@ export class GameController {
         try {
             const token = req.headers['authorization']!.split(' ')[1];
             const gameCode = req.params.code;
-            const toDelete: gameDTO = {code: gameCode}
-            await this.service.delete(token, toDelete)
-            res.status(204).json({message: "deleted"})
+            const toDelete: gameDTO = {code: gameCode};
+            await this.service.delete(token, toDelete);
+            res.status(204).json({message: "deleted"});
         } catch (error) {
-            next(error)
+            next(error);
         }
     }
 
     getMine = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            console.log(req.params)
             const token = req.headers['authorization']!.split(' ')[1];
-            const gameList = await this.service.getAll(token)
-            res.status(200).json({data: gameList})
+            const gameList = await this.service.getAll(token);
+            res.status(200).json({data: gameList});
         } catch (error) {
-            next(error)
+            next(error);
         }
     }
 
     getByCode = async (req: Request<{code: string}>, res: Response, next: NextFunction) => {
         try {
-            console.log(req.params)
             const gameCode = req.params.code;
-            const game = await this.service.getByCode(gameCode)
-            res.status(200).json({data: game})
+            const game = await this.service.getByCode(gameCode);
+            res.status(200).json({data: game});
         } catch (error) {
-            next(error)
+            next(error);
         }
     }
 
