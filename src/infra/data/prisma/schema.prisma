@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id String @id @default(uuid())
+  email String @unique
+  password String
+  username String
+  picturePath String
+  isSuspended Boolean @default(false)
+
+  game Game[]
+  loaner Loan[] @relation("Loaner")
+  receiver Loan[] @relation("Receiver")
+  debtor Fine[] @relation("Debtor")
+  sender Message[] @relation("MsgSender")
+  
+  chatsAsUser1  Chat[] @relation("User1Chats")
+  chatsAsUser2  Chat[] @relation("User2Chats")
+}
+
+enum GameCategories {
+  TABLETOP
+  CARD
+  BOARD
+  PUZZLE
+  CARTRIDGES
+  DISC
+}
+
+model Game {
+  id String @id @default(uuid())
+  userId String
+  code String @unique
+  name String
+  description String
+  category GameCategories
+  minPlayers Int
+  maxPlayers Int
+  minAge Int
+  imagePath String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  loan Loan[] @relation()
+}
+
+enum LoanStatus {
+  ANALYSIS
+  ACCEPTED
+  ONGOING
+  RETURN_PENDING
+  OVERDUE
+  FINALIZED
+}
+
+model Loan {
+  id String @id @default(uuid())
+  loanerId String
+  receiverId String
+  gameId String
+  startDate DateTime
+  deadline DateTime
+  status LoanStatus @default(ANALYSIS)
+
+  loaner User @relation("Loaner", fields: [loanerId], references: [id])
+  receiver User @relation("Receiver", fields: [receiverId], references: [id])
+  game Game @relation(fields: [gameId], references: [id])
+
+  fineLoan Fine[]
+}
+
+model Fine {
+  id String @id @default(uuid())
+  debtorId String
+  loanId String
+  value Decimal @db.Decimal(7, 2)
+
+  debtor User @relation("Debtor", fields: [debtorId], references: [id])
+  loan Loan @relation(fields: [loanId], references: [id])
+}
+
+model Message {
+  id String @id @default(uuid())
+  chatId String
+  senderId String
+  text String
+  createdAt DateTime @default(now())
+
+  sender User @relation("MsgSender", fields: [senderId], references: [id], onDelete: Cascade) 
+  chat Chat @relation("ChatMessage", fields: [chatId], references: [id], onDelete: Cascade)
+}
+
+model Chat {
+  id String @id @default(uuid())
+  
+  user1Id String
+  user2Id String
+
+  user1 User @relation("User1Chats", fields: [user1Id], references: [id])
+  user2 User @relation("User2Chats", fields: [user2Id], references: [id])
+  chat Message[] @relation("ChatMessage")
+
+  @@unique([user1Id, user2Id])
+}
