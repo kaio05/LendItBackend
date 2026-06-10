@@ -6,6 +6,7 @@ import { jwtHelp } from "@/app/utils/jwtHelp";
 import { userRepository } from "@/app/repositories/userRepository";
 import FileStorage from "@/app/utils/FileStorage";
 import { GameSearch } from "@/domain/types/GameSearch";
+import { createGameSchema } from "@/infra/schemas/gameSchema";
 
 export class GameController {
     private service: GameService = new GameService(
@@ -18,9 +19,9 @@ export class GameController {
     create = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const token = req.headers['authorization']!.split(' ')[1];
-            const body = req.body;
-            const newGame: gameDTO = {...body};
-            newGame.userId;
+            const parseData = createGameSchema.safeParse(req.body);
+            if (!parseData.success) throw new Error("Invalid Game Format.");
+            const newGame: gameDTO = {...parseData.data};
             await this.service.create(token, newGame);
             res.status(201).json({message: "created"})
         } catch (error) {
@@ -76,7 +77,7 @@ export class GameController {
     search = async (req: Request<{}, {}, {}, GameSearch>, res: Response, next: NextFunction) => {
         try {
             const filters = req.query;
-            const gameList = await this.service.find(filters)
+            const gameList = await this.service.find(filters);
             res.status(200).json({data: gameList})
         } catch (error) {
             next(error)

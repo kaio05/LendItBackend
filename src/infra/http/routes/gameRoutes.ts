@@ -9,7 +9,7 @@ const controller: GameController = new GameController();
 gameRoute.get("/", controller.search);
 gameRoute.get("/view/:code", controller.getByCode);
 gameRoute.use(verifyAccessToken);
-gameRoute.post("/", controller.create);
+gameRoute.post("/", upload.single("image"), controller.create);
 gameRoute.get("/myGames", controller.getMine);
 gameRoute.patch("/", upload.single("image"), controller.update);
 gameRoute.delete("/:code", controller.delete);

@@ -33,14 +33,12 @@ export class GameService
         if (found) throw new Error("Jogo já cadastrado");
 
         game.userId = decoded.id;
-        game.imagePath = "";
         const saved: gameDTO = await this.repository.save(game);
 
         return saved;
     }
 
     async update(token: string, game: gameDTO): Promise<gameDTO | null> {
-
         const found: gameDTO | null = await this.repository.findByCode(game);
 
         if (!found) throw new Error("Jogo não cadastrado");
@@ -65,6 +63,9 @@ export class GameService
             name: game.name || found.name,
             category: game.category || found.category,
             description: game.description || found.description,
+            minPlayers: game.minPlayers || found.minPlayers,
+            maxPlayers: game.maxPlayers || found.maxPlayers,
+            minAge: game.minAge || found.minAge,
             imagePath: newImagePath
         }
 
@@ -96,7 +97,27 @@ export class GameService
         return await this.repository.getByCode(code);
     }
 
-    async find(params: GameSearch): Promise<gameDTO[] | []> {
-        return await this.repository.find(params);
+    async find(filters: GameSearch): Promise<gameDTO[] | []> {
+        let { name, category, minPlayers, maxPlayers, minAge } = filters;
+
+        if (minPlayers && !isNaN(Number(minPlayers))) {
+            minPlayers = Number(minPlayers);
+        }
+
+        if (maxPlayers && !isNaN(Number(maxPlayers))) {
+            maxPlayers = Number(maxPlayers);
+        }
+
+        if (minAge && !isNaN(Number(minAge))) {
+            minAge = Number(minAge);
+        }
+
+        return await this.repository.find({
+            name,
+            category,
+            minPlayers,
+            maxPlayers,
+            minAge
+        });
     }
 }

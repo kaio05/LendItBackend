@@ -13,9 +13,12 @@ export class GameRepository implements IgameRepository
                 name: game.name!,
                 category: game.category!,
                 description: game.description!,
-                imagePath: game.imagePath!
+                minPlayers: game.minPlayers!,
+                maxPlayers: game.maxPlayers!,
+                minAge: game.minAge!,
+                imagePath: game.imagePath
             }
-        })
+        }) as gameDTO;
 
         return newGame
     }
@@ -24,7 +27,7 @@ export class GameRepository implements IgameRepository
         const updated: gameDTO = await prisma.game.update({
             where: {id: game.id},
             data: {...game}
-        })
+        }) as gameDTO;
 
         return updated
     }
@@ -38,7 +41,7 @@ export class GameRepository implements IgameRepository
             where: {
                 code: game.code
             }
-        })
+        }) as gameDTO;
 
         return foundGame
     }
@@ -48,7 +51,7 @@ export class GameRepository implements IgameRepository
             where: {
                 userId: id
             }
-        })
+        }) as gameDTO[];
     }
 
     async getByCode(code: string): Promise<gameDTO | null> {
@@ -56,17 +59,19 @@ export class GameRepository implements IgameRepository
             where: {
                 code: code
             }
-        })
+        }) as gameDTO;
     }
 
     async find(filters: GameSearch): Promise<gameDTO[] | []> {
-        const { name, category } = filters
+        const { name, category, maxPlayers, minPlayers, minAge } = filters;
         return await prisma.game.findMany({
             where: {
                 name: name !== undefined ? { startsWith: name, mode: 'insensitive' } : undefined,
                 category: category,
-                available: true
+                maxPlayers: { gte: minPlayers },
+                minPlayers: { lte: maxPlayers },
+                minAge: { lte: minAge }
             }
-        })
+        }) as gameDTO[];
     }
 }

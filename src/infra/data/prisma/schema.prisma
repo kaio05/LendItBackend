@@ -25,14 +25,26 @@ model User {
   chatsAsUser2  Chat[] @relation("User2Chats")
 }
 
+enum GameCategories {
+  TABLETOP
+  CARD
+  BOARD
+  PUZZLE
+  CARTRIDGES
+  DISC
+}
+
 model Game {
   id String @id @default(uuid())
   userId String
   code String @unique
   name String
-  category String
   description String
-  imagePath String
+  category GameCategories
+  minPlayers Int
+  maxPlayers Int
+  minAge Int
+  imagePath String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   
