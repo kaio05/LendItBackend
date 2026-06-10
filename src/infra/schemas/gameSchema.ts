@@ -6,7 +6,7 @@ export const createGameSchema = z.object({
     name: z.string(),
     category: z.enum(GameCategories),
     description: z.string(),
-    minPlayers: z.number().int(),
-    maxPlayers: z.number().int(),
-    minAge: z.number().int(),
+    minPlayers: z.coerce.number().int(),
+    maxPlayers: z.coerce.number().int(),
+    minAge: z.coerce.number().int(),
 });
