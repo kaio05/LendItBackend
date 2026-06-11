@@ -30,6 +30,8 @@ export class LoanService
         }
 
         if (!loan.gameId) throw new Error("Identificador do jogo não encontrado.");
+        const game = await this.repository.findGameById(loan.gameId);
+        if (!game) throw new Error("Jogo não encontrado.")
 
         const loanerId = await this.repository.findOwnerByGameId(loan.gameId);
         if (!loanerId) throw new Error("Identificar do dono não foi encontrado.");
@@ -57,11 +59,13 @@ export class LoanService
         ));
 
         const loanerEmail = await this.repository.findUserById(loanerId);
+        
         if (loanerEmail) {
             await this.mail.sendMail({
                 to: loanerEmail.getEmail(),
-                subject: "New Loan.",
-                text: "You received a new loan."
+                subject: "Nova oferta de empréstimo.",
+                html: "<h1>Você recebeu uma proposta de empréstimo.</h1>" + 
+                `<p>${receiver.getUsername()} enviou uma proposta pelo jogo: ${game.getName()}.</p>`
             });
         }
     }
@@ -160,6 +164,18 @@ export class LoanService
         }
 
         await this.repository.updateStatus(id, LoanStatus.ACCEPTED);
+
+        const game = await this.repository.findGameById(loan.getGameId());
+        const receiver = await this.repository.findUserById(loan.getReceiverId());
+        if (receiver && game) {
+            await this.mail.sendMail({
+                to: receiver.getEmail(),
+                subject: "Empréstimo aceito.",
+                html: `<h1>Aproveite o jogo</h1>` + 
+                `<p>Sua oferta de empréstimo pelo jogo ${game.getName()} foi aceita.</p>` +
+                `<p>O prazo final para devolver o jogo é: ${loan.getDeadline()}.</p>`
+            });
+        }
     }
 
     async cancel(token: string, id: string): Promise<void> {
@@ -234,6 +250,18 @@ export class LoanService
 
         await this.repository.updateStatus(id, LoanStatus.OVERDUE);
         await this.repository.createFine(loan.getReceiverId(), loan.getId(), this.value);
+
+        const game = await this.repository.findGameById(loan.getGameId());
+        const receiver = await this.repository.findUserById(loan.getReceiverId());
+
+        if (receiver && game) {
+            await this.mail.sendMail({
+                to: receiver.getEmail(),
+                subject: "Empréstimo atrasado.",
+                html: `<p>Seu empréstimo do jogo ${game.getName()} foi marcado como atrasado.</p>` +
+                `<p>Você está suspenso até pagar a multa.</p>`
+            });
+        }
     }
 
     async confirmReturn(token: string, id: string): Promise<void> {
@@ -248,6 +276,17 @@ export class LoanService
         }
 
         await this.repository.updateStatus(id, LoanStatus.FINALIZED);
+
+        const game = await this.repository.findGameById(loan.getGameId());
+        const receiver = await this.repository.findUserById(loan.getReceiverId());
+
+        if (receiver && game) {
+            await this.mail.sendMail({
+                to: receiver.getEmail(),
+                subject: "Empréstimo Devolvido.",
+                html: `<p>A devolução do empréstimo do jogo ${game.getName()} foi confirmada.</p>`
+            });
+        }
     }
 
     async delete(token: string, id: string) {

@@ -1,3 +1,4 @@
+import { Game, GameCategories } from "@/domain/entities/game";
 import { Loan, LoanStatus } from "@/domain/entities/loan";
 import { User } from "@/domain/entities/user";
 import IloanRepository from "@/domain/Irepositories/IloanRepository";
@@ -138,6 +139,25 @@ export default class LoanRepository implements IloanRepository
             user.picturePath,
             user.isSuspended,
             user.id
+        );
+    }
+
+    async findGameById(id: string): Promise<Game | null> {
+        const game = await prisma.game.findUnique({
+            where: { id }
+        });
+
+        if (!game) return null;
+
+        return new Game(
+            game.userId, 
+            game.code, 
+            game.name, 
+            game.category as GameCategories, 
+            game.description, 
+            game.minPlayers,
+            game.maxPlayers,
+            game.minAge,
         );
     }
 
