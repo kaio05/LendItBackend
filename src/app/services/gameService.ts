@@ -21,61 +21,75 @@ export class GameService
     }
 
     async create(token: string, game: gameDTO): Promise<gameDTO> {
-        const decoded = this.jwtHelp.decodeAccessToken(token);
-        
-        const userExists = await this.userRepository.findById(decoded.id);
-        if (!userExists) {
-            throw new Error("Erro interno.");
+        try {
+            const decoded = this.jwtHelp.decodeAccessToken(token);
+            
+            const userExists = await this.userRepository.findById(decoded.id);
+            if (!userExists) {
+                throw new Error("Erro interno.");
+            }
+
+            const found: gameDTO | null = await this.repository.findByCode(game);
+
+            if (found) throw new Error("Jogo já cadastrado");
+
+            if (game.imagePath) {
+                this.fs.changeDir(game.imagePath, this.imagesDir);
+            }
+
+            game.userId = decoded.id;
+            const saved: gameDTO = await this.repository.save(game);
+
+            return saved;
+        } catch (error) {
+            if (game.imagePath) {
+                this.fs.delete(game.imagePath);
+            }
+            throw error;
         }
-
-        const found: gameDTO | null = await this.repository.findByCode(game);
-
-        if (found) throw new Error("Jogo já cadastrado");
-
-        if (game.imagePath) {
-            this.fs.changeDir(game.imagePath, this.imagesDir);
-        }
-
-        game.userId = decoded.id;
-        const saved: gameDTO = await this.repository.save(game);
-
-        return saved;
     }
 
     async update(token: string, game: gameDTO): Promise<gameDTO | null> {
-        const found: gameDTO | null = await this.repository.findByCode(game);
+        try {
+            const found: gameDTO | null = await this.repository.findByCode(game);
 
-        if (!found) throw new Error("Jogo não cadastrado");
+            if (!found) throw new Error("Jogo não cadastrado");
 
-        const decoded = this.jwtHelp.decodeAccessToken(token);
+            const decoded = this.jwtHelp.decodeAccessToken(token);
 
-        if (found.userId != decoded.id) throw new Error("Usuário incorreto");
+            if (found.userId != decoded.id) throw new Error("Usuário incorreto");
 
-        let newImagePath = found.imagePath;
-        if (game.imagePath) {
-            newImagePath = game.imagePath;
-            this.fs.changeDir(game.imagePath, this.imagesDir);
+            let newImagePath = found.imagePath;
+            if (game.imagePath) {
+                newImagePath = game.imagePath;
+                this.fs.changeDir(game.imagePath, this.imagesDir);
+            }
+            if (found.imagePath) {
+                this.fs.delete(found.imagePath);
+            }
+
+            const toUpdate: gameDTO = {
+                id: found.id,
+                userId: found.userId,
+                code: found.code,
+                name: game.name || found.name,
+                category: game.category || found.category,
+                description: game.description || found.description,
+                minPlayers: game.minPlayers || found.minPlayers,
+                maxPlayers: game.maxPlayers || found.maxPlayers,
+                minAge: game.minAge || found.minAge,
+                imagePath: newImagePath
+            }
+
+            const updated: gameDTO | null = await this.repository.update(toUpdate);
+
+            return updated;
+        } catch (error) {
+            if (game.imagePath) {
+                this.fs.delete(game.imagePath);
+            }
+            throw error;
         }
-        if (found.imagePath) {
-            this.fs.delete(found.imagePath);
-        }
-
-        const toUpdate: gameDTO = {
-            id: found.id,
-            userId: found.userId,
-            code: found.code,
-            name: game.name || found.name,
-            category: game.category || found.category,
-            description: game.description || found.description,
-            minPlayers: game.minPlayers || found.minPlayers,
-            maxPlayers: game.maxPlayers || found.maxPlayers,
-            minAge: game.minAge || found.minAge,
-            imagePath: newImagePath
-        }
-
-        const updated: gameDTO | null = await this.repository.update(toUpdate);
-
-        return updated;
     }
 
     async delete(token: string, game: gameDTO): Promise<void> {
