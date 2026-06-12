@@ -68,6 +68,18 @@ export class GameService
                 this.fs.delete(found.imagePath);
             }
 
+            if (game.minPlayers && !isNaN(Number(game.minPlayers))) {
+                game.minPlayers = Number(game.minPlayers);
+            }
+
+            if (game.maxPlayers && !isNaN(Number(game.maxPlayers))) {
+                game.maxPlayers = Number(game.maxPlayers);
+            }
+
+            if (game.minAge && !isNaN(Number(game.minAge))) {
+                game.minAge = Number(game.minAge);
+            }
+
             const toUpdate: gameDTO = {
                 id: found.id,
                 userId: found.userId,
@@ -75,9 +87,9 @@ export class GameService
                 name: game.name || found.name,
                 category: game.category || found.category,
                 description: game.description || found.description,
-                minPlayers: game.minPlayers || found.minPlayers,
-                maxPlayers: game.maxPlayers || found.maxPlayers,
-                minAge: game.minAge || found.minAge,
+                minPlayers: game.minPlayers ?? found.minPlayers,
+                maxPlayers: game.maxPlayers ?? found.maxPlayers,
+                minAge: game.minAge ?? found.minAge,
                 imagePath: newImagePath
             }
 
