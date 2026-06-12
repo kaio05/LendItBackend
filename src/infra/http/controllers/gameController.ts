@@ -21,7 +21,8 @@ export class GameController {
             const token = req.headers['authorization']!.split(' ')[1];
             const parseData = createGameSchema.safeParse(req.body);
             if (!parseData.success) throw new Error("Invalid Game Format.");
-            const newGame: gameDTO = {...parseData.data};
+            const imagePath = req.file?.path.replace(/\\/g, "/");
+            const newGame: gameDTO = {...parseData.data, imagePath};
             await this.service.create(token, newGame);
             res.status(201).json({message: "created"})
         } catch (error) {
