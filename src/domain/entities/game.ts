@@ -11,7 +11,7 @@ export class Game
 {
     private Id: string;
     private UserId: string;
-    private Code: string;
+    private Code: number;
     private Name: string;
     private Description: string;
     private Category: GameCategories;
@@ -22,7 +22,7 @@ export class Game
 
     constructor(
         userId: string, 
-        code: string, 
+        code: number, 
         name: string, 
         category: GameCategories, 
         description: string, 
