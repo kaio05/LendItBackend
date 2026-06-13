@@ -43,7 +43,7 @@ export class GameController {
         }
     }
 
-    delete = async (req: Request<{code: number}>, res: Response, next: NextFunction) => {
+    delete = async (req: Request<{code: string}>, res: Response, next: NextFunction) => {
         try {
             const token = req.headers['authorization']!.split(' ')[1];
             const gameCode = req.params.code;
@@ -65,7 +65,7 @@ export class GameController {
         }
     }
 
-    getByCode = async (req: Request<{code: number}>, res: Response, next: NextFunction) => {
+    getByCode = async (req: Request<{code: string}>, res: Response, next: NextFunction) => {
         try {
             const gameCode = req.params.code;
             const game = await this.service.getByCode(gameCode);

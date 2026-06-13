@@ -29,7 +29,7 @@ export class GameService
                 throw new Error("Erro interno.");
             }
 
-            const found: gameDTO | null = await this.repository.getByName(game, decoded.id);
+            const found: gameDTO | null = await this.repository.findByCode(game);
 
             if (found) throw new Error("Jogo já cadastrado");
 
@@ -123,7 +123,7 @@ export class GameService
         return await this.repository.getAll(decoded.id);
     }
 
-    async getByCode(code: number): Promise<gameDTO | null> {
+    async getByCode(code: string): Promise<gameDTO | null> {
         return await this.repository.getByCode(code);
     }
 
