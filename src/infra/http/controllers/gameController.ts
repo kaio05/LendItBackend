@@ -65,9 +65,9 @@ export class GameController {
         }
     }
 
-    getByCode = async (req: Request<{code: number}>, res: Response, next: NextFunction) => {
+    getByCode = async (req: Request<{code: string}>, res: Response, next: NextFunction) => {
         try {
-            const gameCode = req.params.code;
+            const gameCode = Number(req.params.code);
             const game = await this.service.getByCode(gameCode);
             res.status(200).json({data: game});
         } catch (error) {
