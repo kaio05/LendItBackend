@@ -8,6 +8,7 @@ export interface IgameRepository
     update(game: gameDTO): Promise<gameDTO | null>;
     delete(game: gameDTO): Promise<void>
     getAll(id: string): Promise<gameDTO[] | []>;
-    getByCode(code: string): Promise<gameDTO | null>
+    getByCode(code: number): Promise<gameDTO | null>;
+    getByName(game: gameDTO, userId: string): Promise<gameDTO | null>;
     find(filters: GameSearch): Promise<gameDTO[] | []>;
 }
