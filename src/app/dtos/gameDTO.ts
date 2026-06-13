@@ -2,7 +2,7 @@ import { GameCategories } from "@/domain/entities/game"
 
 export type gameDTO = {
     id?: string
-    code?: number
+    code: string
     name?: string
     category?: GameCategories
     description?: string

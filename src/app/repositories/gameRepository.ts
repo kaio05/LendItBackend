@@ -9,6 +9,7 @@ export class GameRepository implements IgameRepository
         const newGame: gameDTO = await prisma.game.create({
             data: {
                 userId: game.userId!,
+                code: game.code,
                 name: game.name!,
                 category: game.category!,
                 description: game.description!,
@@ -53,19 +54,10 @@ export class GameRepository implements IgameRepository
         }) as gameDTO[];
     }
 
-    async getByCode(code: number): Promise<gameDTO | null> {
+    async getByCode(code: string): Promise<gameDTO | null> {
         return await prisma.game.findUnique({
             where: {
                 code: code
-            }
-        }) as gameDTO;
-    }
-
-    async getByName(game: gameDTO, userId: string): Promise<gameDTO | null> {
-        return await prisma.game.findFirst({
-            where: {
-                name: game.name,
-                userId: userId
             }
         }) as gameDTO;
     }
