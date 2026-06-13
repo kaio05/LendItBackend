@@ -34,6 +34,7 @@ export class GameController {
         try {
             const token = req.headers['authorization']!.split(' ')[1];
             const body = req.body;
+            body.code = Number(body.code);
             const imagePath = req.file?.path.replace(/\\/g, "/");
             const toUpdate: gameDTO = {...body, imagePath};
             await this.service.update(token, toUpdate);
@@ -46,7 +47,7 @@ export class GameController {
     delete = async (req: Request<{code: number}>, res: Response, next: NextFunction) => {
         try {
             const token = req.headers['authorization']!.split(' ')[1];
-            const gameCode = req.params.code;
+            const gameCode = Number(req.params.code);
             const toDelete: gameDTO = {code: gameCode};
             await this.service.delete(token, toDelete);
             res.status(204).json({message: "deleted"});
@@ -68,7 +69,7 @@ export class GameController {
     getByCode = async (req: Request<{code: number}>, res: Response, next: NextFunction) => {
         try {
             const gameCode = req.params.code;
-            const game = await this.service.getByCode(gameCode);
+            const game = await this.service.getByCode(Number(gameCode));
             res.status(200).json({data: game});
         } catch (error) {
             next(error);
