@@ -8,6 +8,7 @@ const controller: GameController = new GameController();
 
 gameRoute.get("/", controller.search);
 gameRoute.get("/view/:code", controller.getByCode);
+gameRoute.get("/date/:id", controller.getDates);
 gameRoute.use(verifyAccessToken);
 gameRoute.post("/", upload.single("image"), controller.create);
 gameRoute.get("/myGames", controller.getMine);

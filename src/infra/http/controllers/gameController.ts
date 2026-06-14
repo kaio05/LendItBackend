@@ -70,7 +70,18 @@ export class GameController {
         try {
             const gameCode = req.params.code;
             const game = await this.service.getByCode(Number(gameCode));
-            res.status(200).json({data: game});
+            const ownerName = await this.service.getUsername(game?.userId);
+            res.status(200).json({data: game, ownerName});
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    getDates = async (req: Request<{id: string}>, res: Response, next: NextFunction) => {
+        try {
+            const gameId = req.params.id;
+            const dates = await this.service.getDates(gameId);
+            res.status(200).json({ data: dates });
         } catch (error) {
             next(error);
         }

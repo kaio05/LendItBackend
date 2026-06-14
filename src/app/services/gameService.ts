@@ -127,6 +127,16 @@ export class GameService
         return await this.repository.getByCode(code);
     }
 
+    async getUsername(userId: string | undefined): Promise<string | null> {
+        if (!userId) return null;
+        return await this.repository.getUsername(userId);
+    }
+
+    async getDates(id: string | undefined): Promise<{from: Date, To: Date}[] | {}[]> {
+        if (!id) return [];
+        return await this.repository.getDates(id);
+    }
+
     async find(filters: GameSearch): Promise<gameDTO[] | []> {
         let { name, category, minPlayers, maxPlayers, minAge } = filters;
 

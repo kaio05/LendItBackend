@@ -70,6 +70,26 @@ export class GameRepository implements IgameRepository
         }) as gameDTO;
     }
 
+    async getUsername(userId: string): Promise<string | null> {
+        const user = await prisma.user.findUnique({
+            where: { id: userId }
+        });
+
+        return user? user.username : null;
+    }
+
+    async getDates(id: string): Promise<{from: Date, To: Date}[] | {}[]> {
+        return await prisma.loan.findMany({
+            select: {
+                startDate: true,
+                deadline: true,
+            },
+            where: { 
+                gameId: id
+            }
+        });
+    }
+
     async find(filters: GameSearch): Promise<gameDTO[] | []> {
         const { name, category, maxPlayers, minPlayers, minAge } = filters;
         return await prisma.game.findMany({

@@ -10,5 +10,7 @@ export interface IgameRepository
     getAll(id: string): Promise<gameDTO[] | []>;
     getByCode(code: number): Promise<gameDTO | null>;
     getByName(game: gameDTO, userId: string): Promise<gameDTO | null>;
+    getUsername(userId: string): Promise<string | null>;
+    getDates(id: string): Promise<{from: Date, To: Date}[] | {}[]>;
     find(filters: GameSearch): Promise<gameDTO[] | []>;
 }
