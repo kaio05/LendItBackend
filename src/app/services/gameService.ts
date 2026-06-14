@@ -113,7 +113,15 @@ export class GameService
 
         if (found.userId != decoded.id) throw new Error("Usuário incorreto")
 
-        await this.repository.delete(game);
+        try {
+            await this.repository.delete(game);
+        } catch (error: any) {
+            if (error.cause && error.cause.code === "23001") {
+                throw new Error("Ese jogo não pode ser deletado, pois está associado a um empréstimo.");
+            } else {
+                throw new Error("Erro durante a remoção do jogo.");
+            }
+        }
 
         return;
     }
