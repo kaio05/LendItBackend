@@ -81,7 +81,13 @@ export class userServices
             throw new Error("Erro interno.");
         }
         this.fs.delete(userExists.getPicturePath());
-        await this.repository.delete(userExists);
+
+        try {
+            await this.repository.delete(userExists);
+        } catch (error: any) {
+            throw new Error("Não conseguimos deletar este usuário, por favor tente novamente outra hora.")
+        }
+        
     }
 
     async findToken(token: string): Promise<User | null> {

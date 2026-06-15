@@ -14,8 +14,9 @@ export default class MailService implements IEmail
     sendMail = async (options: sendMailOptions): Promise<void> => {
         if (process.env.EMAIL_EXCHANGE === "true") {
             try {
+                
                 if (!process.env.EMAIL_USERNAME) return;
-
+                console.log("mande")
                 await this.transporter.sendMail({
                     from: {
                         name: "LendIt Team",
