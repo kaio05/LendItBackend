@@ -60,7 +60,7 @@ export default class LoanRepository implements IloanRepository
             deadline: loan.deadline,
             status: loan.status as LoanStatus,
             owner: loan.loaner?.username, 
-            game: loan.game?.name         
+            game: loan.game?.name
         }));
     }
 

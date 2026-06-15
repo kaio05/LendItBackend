@@ -1,6 +1,7 @@
 import Fine from "@/domain/entities/fine";
 import IfineRepository from "@/domain/Irepositories/IfineRepository";
 import { Ijwt } from "@/domain/Iutils/Ijwt";
+import { fineGetDTO } from "../dtos/fineDTO";
 
 export default class FineServices
 {
@@ -26,7 +27,7 @@ export default class FineServices
         return fine;
     }
 
-    async getAll(token: string): Promise<Fine[]> {
+    async getAll(token: string): Promise<fineGetDTO[]> {
         const userId = this.jwt.decodeAccessToken(token).id;
 
         const userExists = this.repository.userExists(userId);
