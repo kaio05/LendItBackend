@@ -20,8 +20,13 @@ export default class FineRepository implements IfineRepository
             where: { debtorId: id },
             include: {
                 loan: {
-                    select: { deadline: true },
-                    include: { game: { select: {name: true}}}
+                    select: { 
+                        startDate: true,
+                        deadline: true, 
+                        game: {
+                            select: { name: true }
+                        }
+                    },
                 }
             }
         });
@@ -31,6 +36,7 @@ export default class FineRepository implements IfineRepository
             loanId: fine.loanId,
             debtorId: fine.debtorId,
             value: fine.value.toNumber(),
+            startDate: fine.loan.startDate,
             deadline: fine.loan.deadline,
             gameName: fine.loan.game.name
         }));

@@ -7,8 +7,8 @@ const controller = new FineController();
 
 fineRoute.use(verifyAccessToken);
 
-fineRoute.get("/:id", controller.getUnique);
 fineRoute.get("/me", controller.getMine);
+fineRoute.get("/unique/:id", controller.getUnique);
 fineRoute.delete("/pay/:id", controller.payFine);
 
 export default fineRoute

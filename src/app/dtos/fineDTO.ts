@@ -11,5 +11,6 @@ export type fineGetDTO = {
     loanId?: string,
     value?: number,
     gameName?: string,
+    startDate?: Date,
     deadline?: Date
 }
