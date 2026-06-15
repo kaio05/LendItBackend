@@ -101,7 +101,7 @@ export class loanController
             });
         }
 
-        const newDates = updateLoanSchema. safeParse(req.body);
+        const newDates = updateLoanSchema.safeParse(req.body);
         if (!newDates.success) {
             return res.status(400).json({
                 message: "Invalid format."
@@ -111,6 +111,7 @@ export class loanController
         try {
             const token = req.headers['authorization']!.split(' ')[1];
             await this.service.updateDate(token, {
+                id: loanId,
                 startDate: newDates.data.startDate,
                 deadline: newDates.data.deadline
             });
@@ -119,7 +120,6 @@ export class loanController
         } catch (error) {
             next(error);
         }
-
     }
 
     accept = async (req: Request<Params>, res: Response, next: NextFunction) => {

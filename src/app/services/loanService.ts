@@ -237,16 +237,14 @@ export class LoanService
             throw new Error("Você não tem permissão para confirmar o atraso.");
         }
 
-        if (!(loan.getStatus() !== LoanStatus.RETURN_PENDING)) {
+        if (loan.getStatus() !== LoanStatus.RETURN_PENDING) {
             throw new Error("Você não pode confirmar o atraso");
         }
 
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
-        if (today.getTime() <= loan.getDeadline().getTime()) {
-            throw new Error("O prazo final não foi atingido.");
-        }
+        // if (today.getTime() <= loan.getDeadline().getTime()) { throw new Error("O prazo final não foi atingido."); }
 
         await this.repository.updateStatus(id, LoanStatus.OVERDUE);
         await this.repository.createFine(loan.getReceiverId(), loan.getId(), this.value);
@@ -296,7 +294,7 @@ export class LoanService
             throw new Error("Você não tem permissão para deletar esse empréstimo.");
         }
 
-        if (loan.getStatus() !== LoanStatus.ANALYSIS) {
+        if (loan.getStatus() !== LoanStatus.ANALYSIS && loan.getStatus() !== LoanStatus.FINALIZED) {
             throw new Error("Este empréstimo já foi aceito e não pode ser apagado.");
         }
 
