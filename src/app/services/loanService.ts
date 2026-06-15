@@ -2,7 +2,7 @@ import { Loan, LoanStatus } from "@/domain/entities/loan";
 import IloanRepository from "@/domain/Irepositories/IloanRepository";
 import { IEmail } from "@/domain/Iutils/IEmail";
 import { Ijwt } from "@/domain/Iutils/Ijwt";
-import { loanDTO } from "../dtos/loanDTO";
+import { loanDTO, LoanGetDTO } from "../dtos/loanDTO";
 
 export class LoanService
 {
@@ -70,7 +70,7 @@ export class LoanService
         }
     }
 
-    async getAll(token: string): Promise<Loan[] | []> {
+    async getAll(token: string): Promise<LoanGetDTO[]> {
         const userId = this.jwt.decodeAccessToken(token).id;
         
         const userExists = this.repository.userExists(userId);

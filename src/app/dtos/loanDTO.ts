@@ -9,3 +9,12 @@ export type loanDTO = {
     deadline?: Date;
     status?: LoanStatus;
 }
+
+export type LoanGetDTO = {
+    id?: string;
+    startDate?: Date;
+    deadline?: Date;
+    status?: LoanStatus;
+    owner?: string,
+    game?: string
+}

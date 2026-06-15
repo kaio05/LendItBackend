@@ -1,12 +1,13 @@
 import { Loan, LoanStatus } from "../entities/loan";
 import { User } from "../entities/user";
 import { Game } from "../entities/game";
+import { LoanGetDTO } from "@/app/dtos/loanDTO";
 
 export default interface IloanRepository
 {
     save(loan: Loan): Promise<void>;
     findById(id: string): Promise<Loan | null>;
-    findByUserId(id: string): Promise<Loan[]>;
+    findByUserId(id: string): Promise<LoanGetDTO[]>;
     findByGameId(id: string): Promise<Loan[]>;
     findByStatus(id:string, status: LoanStatus): Promise<Loan[]>;
     updateDate(id: string, start: Date, deadline: Date): Promise<void>;

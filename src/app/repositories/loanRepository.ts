@@ -3,6 +3,7 @@ import { Loan, LoanStatus } from "@/domain/entities/loan";
 import { User } from "@/domain/entities/user";
 import IloanRepository from "@/domain/Irepositories/IloanRepository";
 import { prisma } from "@/infra/data/lib/prisma";
+import { LoanGetDTO } from "../dtos/loanDTO";
 
 export default class LoanRepository implements IloanRepository
 {
@@ -36,25 +37,28 @@ export default class LoanRepository implements IloanRepository
         );
     }
 
-    async findByUserId(id: string): Promise<Loan[]> {
+    async findByUserId(id: string): Promise<LoanGetDTO[]> {
         const loans = await prisma.loan.findMany({
             where: {
                 OR: [
                     { loanerId: id },
                     { receiverId: id }
                 ]
+            },
+            include: {
+                loaner: { select: { username: true } }, 
+                game: { select: { name: true } }
             }
         });
 
-        return loans.map(loan => new Loan(
-            loan.loanerId,
-            loan.receiverId,
-            loan.gameId,
-            loan.startDate,
-            loan.deadline,
-            loan.status as LoanStatus,
-            loan.id
-        ));
+        return loans.map(loan => ({
+            id: loan.id,
+            startDate: loan.startDate,
+            deadline: loan.deadline,
+            status: loan.status as LoanStatus,
+            owner: loan.loaner?.username, 
+            game: loan.game?.name         
+        }));
     }
 
     async findByGameId(id: string): Promise<Loan[]> {
