@@ -53,6 +53,9 @@ export default class LoanRepository implements IloanRepository
 
         return loans.map(loan => ({
             id: loan.id,
+            loanerId: loan.loanerId,
+            receiverId: loan.receiverId,
+            gameId: loan.gameId,
             startDate: loan.startDate,
             deadline: loan.deadline,
             status: loan.status as LoanStatus,

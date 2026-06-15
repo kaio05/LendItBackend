@@ -12,6 +12,9 @@ export type loanDTO = {
 
 export type LoanGetDTO = {
     id?: string;
+    loanerId?: string;
+    receiverId?: string;
+    gameId?: string;
     startDate?: Date;
     deadline?: Date;
     status?: LoanStatus;
